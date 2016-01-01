@@ -1,6 +1,11 @@
 # HTTP Gateway for Azure Service Fabric services
+
 This project contains an ASP.NET 5 middleware which can be used 
 as a public gateway to your internal HTTP based Service Fabric services.
+
+https://ci.appveyor.com/api/projects/status/github/gruntjs/grunt?branch=master&svg=true
+
+[![Build status](https://ci.appveyor.com/api/projects/status/glormo3hm3wsdwm4/branch/master?svg=true)](https://ci.appveyor.com/project/cwe1ss/servicefabric-httpservicegateway/branch/master)
 
 ## Introduction
 
