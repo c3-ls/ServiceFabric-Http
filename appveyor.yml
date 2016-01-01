@@ -1,0 +1,17 @@
+nuget:
+  account_feed: true
+  
+init:
+  - git config --global core.autocrlf true
+  
+install:
+ - cmd: nuget sources add -Name api.nuget.org -Source https://api.nuget.org/v3/index.json
+ - ps: "&{$Branch='dev';iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}"
+ - ps: dnvm update-self
+ - ps: dnvm upgrade
+ - ps: dnvm install 1.0.0-rc1-update1 -r clr -a x64
+ - ps: dnvm list
+ - ps: dnvm use 1.0.0-rc1-update1 -r clr -a x64
+
+before_build:
+ - ps: dnu restore
