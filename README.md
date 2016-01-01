@@ -60,15 +60,15 @@ This project contains an HTTP implementation of `ICommunicationClientFactory`
 for *resolving HTTP-based services*. (see `HttpCommunication*.cs` for details)
 
 ### Transparent retry logic
-The built-in classes `ServiceProxy` and `ActorProxy` from the SDK implement 
+The classes `ServiceProxy` and `ActorProxy` from the SDK implement 
 transparent retry logic in case of failures (e.g. because a node went down
-or the service returned a timeout) If you are using HTTP, you are on your own again.
+or the service returned a timeout). If you are using HTTP, you are on your own again.
 
 This project implements the *retry functionality of `ICommunicationClientFactory`
 for HTTP*. (see `HttpCommunicationClientFactory.cs` for details)
 
-### Forwarding requests 1:1 to the service
-After the target service was resolved, the incoming request is forwarded
+### Forwarding requests to the service
+After the target service address was resolved, the incoming request is forwarded
 to the target service by *copying all request headers and the request body*.
 (see `HttpServiceGatewayMiddleware` for details)
 
@@ -78,10 +78,12 @@ the `IApplicationBuilder.Map()` feature to bind services to different paths
 of your gateway. You can e.g. map "/service1" to "InternalService1" and 
 "/service2" to "InternalService2". (see samples/HttpGateway/Startup.cs for details)
 
+You can also use this feature to integrate the middleware into an existing application.
+
 ### Proxy Headers
-Since your target service now no longer talks directly to the original client,
-it doesn't get the original IP address of the client and it also doesn't know
-about the original URL which was requested by the client. 
+Since your original client now no longer talks directly to the target service,
+the target service doesn't get the original IP address of the client and it also 
+doesn't know about the original URL which was requested by the client. 
 
 For this reason, the gateway *adds standard proxy headers* to pass this information
 to the target services. It implements the new 
@@ -97,10 +99,17 @@ This way, services can adjust their absolute URLs accordingly.
 ## Usage
 
 If you want to create a new ASP.NET 5 gateway service, please take a look at the
-project `samples/HttpGateway` for a basic example of a project structure. 
+project `samples/HttpGateway` for a basic example.
+
+To use the middleware in your application you have to add it to your request
+pipeline in your `Startup` class. The following using statement is required:
+
+```
+using C3.ServiceFabric.HttpServiceGateway;
+```
 
 If you want to redirect all requests to one service you can setup the middleware
-to listen to the root path by invoking it like this:
+to listen to the root path by invoking it like this in your `Startup.Configure` method:
 
 ```csharp
 appBuilder.RunHttpServiceGateway(new HttpServiceGatewayOptions
@@ -112,8 +121,8 @@ appBuilder.RunHttpServiceGateway(new HttpServiceGatewayOptions
 In most cases however, you would want to serve multiple services in your gateway.
 Even if you only have one service it is still advisable to serve it on a subfolder
 to be safe for the future.
-To configure the middleware for a certain path, you have to invoke it like this. 
-You have to do this for each service.
+To configure the middleware for a certain path, you have to invoke it like this
+in your `Startup.Configure` method. You have to do this for each service.
 
 ```csharp
 app.Map("/service", appBuilder =>
@@ -145,3 +154,29 @@ startup.
 When you create the middleware for one service, you can pass an instance of 
 `HttpServiceGatewayOptions` which allows you to adjust the retry behavior and
 also to set a service partition key resolver if you use partitioned services.
+
+## Known Issues and Considerations
+
+The retry logic currently also retries the service call if it received a response
+with a status code 5xx (Server Error). If your service is actually broken
+or too busy, this gateway keeps retrying until the configured maximum is reached.
+It does *not* yet implement a Circuit Breaker pattern.
+
+Since the gateway retries failed requests, you have to make sure your services
+are idempotent or do not persist any state in case they fail. There are multiple
+scenarios where retries are problematic and can lead to logic beeing executed
+multiple times:
+
+* The gateway cancels requests after a specified timeout and retries. 
+(Your service should react to this cancellation and abort)
+* The response from your service might not reach the gateway due to network 
+issues which also leads to a retry
+
+Please take a detailed look at the implementation of the retry-logic to see if
+it fits your needs!
+
+## Contributions
+
+Feel free to post issues, questions and feedback as an issue in this repository. 
+If you want to contribute code please make sure you discuss the change with us before
+you send the pull request if it contains major or breaking changes.
