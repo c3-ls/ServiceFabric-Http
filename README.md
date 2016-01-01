@@ -155,7 +155,7 @@ When you create the middleware for one service, you can pass an instance of
 `HttpServiceGatewayOptions` which allows you to adjust the retry behavior and
 also to set a service partition key resolver if you use partitioned services.
 
-## Known Issues and Considerations
+## Considerations
 
 The retry logic currently also retries the service call if it received a response
 with a status code 5xx (Server Error). If your service is actually broken
@@ -172,8 +172,77 @@ multiple times:
 * The response from your service might not reach the gateway due to network 
 issues which also leads to a retry
 
-Please take a detailed look at the implementation of the retry-logic to see if
-it fits your needs!
+*Please take a detailed look at the implementation of the retry-logic to see if
+it fits your needs!*
+
+### Adjusting absolute URLs in services
+
+The gateway doesn't rewrite absolute URLs which are sent by the target service. 
+Your services therefore must adjust them according to the sent proxy headers.
+
+Typical examples of absolute URLs in APIs are API descriptions like Swagger.
+If you use "Swashbuckle" (Swagger for ASP.NET) you can overwrite the base url
+by setting `c.RootUrl(req => GetRootUrl(req));` with following implementation:
+
+```csharp
+private static string GetRootUrl(HttpRequestMessage request)
+{
+    string scheme = null;
+    string host = null;
+
+    // Is there a "Forwarded" header?
+    string forwarded = GetHeaderValue(request, "Forwarded");
+    if (forwarded != null)
+    {
+        string[] parts = forwarded.Replace(" ", "").Split(';');
+
+        foreach (var part in parts)
+        {
+            if (part != null && part.StartsWith("host=", StringComparison.OrdinalIgnoreCase))
+            {
+                host = part.Substring("host=".Length);
+                if (host == string.Empty) host = null;
+            }
+            if (part != null && part.StartsWith("proto=", StringComparison.OrdinalIgnoreCase))
+            {
+                scheme = part.Substring("proto=".Length);
+                if (scheme == string.Empty) scheme = null;
+            }
+        }
+    }
+
+    // Fallback to non-standard "X-Forwarded-Host"/"Port"
+    string xForwardedHost = GetHeaderValue(request, "X-Forwarded-Host");
+    if (host == null && xForwardedHost != null)
+    {
+        host = xForwardedHost;
+
+        // in case there was no port in the host
+        string xForwardedPort = GetHeaderValue(request, "X-Forwarded-Port");
+        if (host.IndexOf(':') < 0 && xForwardedPort != null)
+        {
+            host += ":" + xForwardedPort;
+        }
+    }
+
+    // take the current URI if there was no header
+    scheme = scheme ?? GetHeaderValue(request, "X-Forwarded-Proto") ?? request.RequestUri.Scheme;
+    host = host ?? (request.RequestUri.Host + ":" + request.RequestUri.Port.ToString());
+
+    // relative path (Swashbuckle doesn't allow a trailing '/')
+    string path = GetHeaderValue(request, "X-Forwarded-PathBase") ?? request.GetRequestContext().VirtualPathRoot.ToString();
+    path = "/" + path.TrimStart('/');
+    path = path.TrimEnd('/');
+
+    return $"{scheme}://{host}{path}";
+}
+
+private static string GetHeaderValue(HttpRequestMessage request, string headerName)
+{
+    IEnumerable<string> list;
+    return request.Headers.TryGetValues(headerName, out list) ? list.FirstOrDefault() : null;
+}
+```
 
 ## Contributions
 
