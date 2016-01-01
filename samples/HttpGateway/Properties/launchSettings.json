@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "web": {
+      "commandName": "web",
+      "environmentVariables": {
+        "Hosting:Environment": "Development"
+      },
+      "sdkVersion": "dnx-clr-win-x64.1.0.0-rc1-update1"
+    }
+  }
+}

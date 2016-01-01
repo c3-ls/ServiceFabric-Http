@@ -1,0 +1,24 @@
+﻿{
+  "version": "0.1.0-*",
+  "description": "ASP.NET 5 gateway middleware for HTTP-based \"Azure Service Fabric\" services",
+  "authors": [ "C3 Loyalty Services" ],
+
+  "compilationOptions": {
+    "warningsAsErrors": true
+  },
+
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/c3-ls/ServiceFabric-HttpServiceGateway"
+  },
+
+  "dependencies": {
+    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
+    "Microsoft.ServiceFabric.AspNet.Hosting": "1.0.0-rc1",
+    "System.Net.Http": "4.0.1-beta-23516"
+  },
+
+  "frameworks": {
+    "dnx451": { }
+  }
+}
