@@ -1,7 +1,7 @@
 # HTTP Gateway for Azure Service Fabric services
 
 This project contains an ASP.NET 5 middleware which can be used 
-as a public gateway to your internal HTTP based Service Fabric services.
+as a public gateway for your internal HTTP based Service Fabric services.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/glormo3hm3wsdwm4/branch/master?svg=true)](https://ci.appveyor.com/project/cwe1ss/servicefabric-httpservicegateway/branch/master)
 
@@ -152,7 +152,7 @@ There are 2 different ways to configure this module:
 
 There is a class called `GlobalConfig` which contains some default parameters. 
 If you are not happy with these, you can change them at your application 
-startup.
+startup (e.g. in the constructor of your `Startup` class).
 
 When you create the middleware for one service, you can pass an instance of 
 `HttpServiceGatewayOptions` which allows you to adjust the retry behavior and
