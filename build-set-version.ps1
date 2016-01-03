@@ -5,7 +5,7 @@
 
 #$ErrorActionPreference = "Stop" 
 
-if ($true) {
+if ($false) {
     # for testing the script locally
     $env:APPVEYOR_REPO_TAG = $false
     $env:APPVEYOR_BUILD_NUMBER = 1234
