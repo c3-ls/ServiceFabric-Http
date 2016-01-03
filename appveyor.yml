@@ -1,16 +1,54 @@
-nuget:
-  account_feed: true
-  
+version: 0.1.0+{build}
+skip_tags: true
+
 init:
   - git config --global core.autocrlf true
-  
+ 
 install:
- - ps: "&{$Branch='dev';iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}"
- - ps: dnvm update-self
- - ps: dnvm upgrade
- - ps: dnvm install 1.0.0-rc1-update1 -r clr -a x64
- - ps: dnvm list
- - ps: dnvm use 1.0.0-rc1-update1 -r clr -a x64
+  - ps: "&{$Branch='dev';iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}"
+  - ps: dnvm update-self
+  - ps: dnvm upgrade
+  - ps: dnvm install 1.0.0-rc1-update1 -r clr -a x64
+  - ps: dnvm list
+  - ps: dnvm use 1.0.0-rc1-update1 -r clr -a x64
+
+assembly_info:
+  patch: true
+  file: AssemblyInfo.*
+  assembly_version: "{version}"
+  assembly_file_version: "{version}"
+  assembly_informational_version: "{version}"
+
+nuget:
+  disable_publish_on_pr: true
+
+## do we need this? platform: x64
+
+configuration: Release
 
 before_build:
- - ps: dnu restore
+  - ps: dnu restore
+
+artifacts:
+  - path: artifacts/bin/C3.ServiceFabric.HttpServiceGateway/{configuration}/*.nupkg
+    name: NugetPackage
+
+deploy:
+#  - provider: NuGet
+#    api_key:
+#      secure: bHxVFrCgoJJEWXLQ4zMmVjELwPWDcf4IG+VY5O1Jv5Ieg20ptZLRi+ZanUA2TTBo
+#    skip_symbols: true
+#    artifact: NugetPackage
+#    on:
+#      branch: master
+  - provider: GitHub
+    release: v$(appveyor_build_version)
+    description: "See milestone for release notes"
+    draft: true
+    prerelease: true
+    auth_token:
+      secure: JU9H+A+WwAtz4Xkcd/50N239EiX1o7OpEnmtiQGayR+Zc2ZHF8xrcPMRelHyJwZL
+    on:
+      branch: master
+    
+
