@@ -37,9 +37,11 @@ artifacts:
     name: NugetPackage
 
 deploy:
-  # always publish to MyGet
+  # publish all changes on master to MyGet
   - provider: Environment
     name: MyGet C3-OSS
+    on:
+      branch: master
   
   # new release tag -> create GitHub release
   - provider: GitHub
