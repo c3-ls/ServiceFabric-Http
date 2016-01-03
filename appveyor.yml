@@ -1,3 +1,4 @@
+# CI Build number is incremental and not related to actual version number of the product
 version: '{build}'
 
 init:
@@ -10,6 +11,9 @@ install:
   - ps: dnvm install 1.0.0-rc1-update1 -r clr -a x64
   - ps: dnvm list
   - ps: dnvm use 1.0.0-rc1-update1 -r clr -a x64
+  
+  # update project.json versions for continuous delivery to MyGet
+  - ps: .\build-set-version.ps1
 
 #assembly_info:
 #  patch: true
