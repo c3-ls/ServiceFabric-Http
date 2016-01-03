@@ -1,9 +1,10 @@
-version: 0.1.0+{build}
-skip_tags: true
+version: {build}
 
 init:
   - git config --global core.autocrlf true
- 
+
+
+
 install:
   - ps: "&{$Branch='dev';iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}"
   - ps: dnvm update-self
@@ -34,13 +35,11 @@ artifacts:
     name: NugetPackage
 
 deploy:
-#  - provider: NuGet
-#    api_key:
-#      secure: bHxVFrCgoJJEWXLQ4zMmVjELwPWDcf4IG+VY5O1Jv5Ieg20ptZLRi+ZanUA2TTBo
-#    skip_symbols: true
-#    artifact: NugetPackage
-#    on:
-#      branch: master
+  # always publish to myget
+#  - provider: Environment
+#    name: MyGet C3-OSS
+  
+  # new release tag -> create GitHub release
   - provider: GitHub
     release: v$(appveyor_build_version)
     description: "See milestone for release notes"
@@ -50,5 +49,12 @@ deploy:
       secure: JU9H+A+WwAtz4Xkcd/50N239EiX1o7OpEnmtiQGayR+Zc2ZHF8xrcPMRelHyJwZL
     on:
       branch: master
-    
-
+      appveyor_repo_tag: true
+      
+  # new release tag -> publish to nuget
+  - provider: Environment
+    #name: NuGet.org
+    name: MyGet C3-OSS
+    on:
+      branch: master
+      appveyor_repo_tag: true
