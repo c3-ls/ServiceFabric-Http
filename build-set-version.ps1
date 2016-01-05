@@ -12,8 +12,7 @@ if ($false) {
 }
 
 if (!$env:APPVEYOR_BUILD_NUMBER) {
-    Write-Host "ERROR: APPVEYOR_BUILD_NUMBER is not set! Exiting"
-    exit
+    throw "ERROR: APPVEYOR_BUILD_NUMBER is not set!"
 }
 
 if ($env:APPVEYOR_REPO_TAG -eq $true -or $env:APPVEYOR_REPO_TAG -eq "true") {
