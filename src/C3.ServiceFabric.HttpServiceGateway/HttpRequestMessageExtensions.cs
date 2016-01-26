@@ -62,7 +62,6 @@ namespace C3.ServiceFabric.HttpServiceGateway
                 {
                     target.Content.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
                 }
-                break;
             }
         }
 
