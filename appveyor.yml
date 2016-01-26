@@ -54,11 +54,3 @@ deploy:
     on:
       branch: master
       appveyor_repo_tag: true
-      
-  # new release tag -> publish to nuget
-  - provider: Environment
-    #name: NuGet.org
-    name: MyGet C3-OSS
-    on:
-      branch: master
-      appveyor_repo_tag: true
