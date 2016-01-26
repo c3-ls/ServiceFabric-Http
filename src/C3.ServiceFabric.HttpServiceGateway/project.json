@@ -4,7 +4,7 @@
   "authors": [ "C3 Loyalty Services" ],
   "projectUrl": "https://github.com/c3-ls/ServiceFabric-HttpServiceGateway",
   "licenseUrl": "https://github.com/c3-ls/ServiceFabric-HttpServiceGateway/blob/master/LICENSE",
-  "tags": ["azure-service-fabric", "service-fabric", "gateway"],
+  "tags": ["ServiceFabric", "Gateway", "Azure", "Proxy"],
   
   "compilationOptions": {
     "warningsAsErrors": true
