@@ -42,9 +42,9 @@ namespace C3.ServiceFabric.HttpServiceGateway
         };
 
         /// <summary>
-        /// Copies all details from the current request to the target.
+        /// Copies all headers from the current request to the target.
         /// </summary>
-        public static void CopyFromCurrentContext(this HttpRequestMessage target, HttpContext context)
+        public static void CopyHeadersFromCurrentContext(this HttpRequestMessage target, HttpContext context)
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (context == null) throw new ArgumentNullException(nameof(context));
@@ -52,13 +52,6 @@ namespace C3.ServiceFabric.HttpServiceGateway
             // interesting links:
             // http://www.wiliam.com.au/wiliam-blog/web-design-sydney-relaying-an-httprequest-in-asp-net
             // https://github.com/aspnet/Proxy/blob/dev/src/Microsoft.AspNet.Proxy/ProxyMiddleware.cs
-
-            target.Method = new HttpMethod(context.Request.Method);
-
-            if (context.Request.ContentLength > 0)
-            {
-                target.Content = new StreamContent(context.Request.Body);
-            }
 
             foreach (var header in context.Request.Headers)
             {
@@ -71,12 +64,16 @@ namespace C3.ServiceFabric.HttpServiceGateway
                 }
                 break;
             }
-
-            AddProxyHeaders(target, context);
         }
 
-        private static void AddProxyHeaders(HttpRequestMessage target, HttpContext context)
+        /// <summary>
+        /// Adds headers to the request that describe the proxy.
+        /// </summary>
+        public static void AddProxyHeaders(this HttpRequestMessage target, HttpContext context)
         {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (context == null) throw new ArgumentNullException(nameof(context));
+
             // Via (will be added to an existing Via header)
             target.Headers.Add(HeaderNames.Via, "1.1 " + Environment.MachineName);
 

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Client;
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -54,12 +55,25 @@ namespace C3.ServiceFabric.HttpServiceGateway
 
         public async Task Invoke(HttpContext context)
         {
+            byte[] contextRequestBody = null;
+
             try
             {
                 ServicePartitionClient<HttpCommunicationClient> servicePartitionClient = CreateServicePartitionClient(context);
 
+                // Request Body is a forward-only stream so it is read into memory for potential retries.
+                // NOTE: This might be an issue for very big requests.
+                if (context.Request.ContentLength > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        context.Request.Body.CopyTo(memoryStream);
+                        contextRequestBody = memoryStream.ToArray();
+                    }
+                }
+
                 HttpResponseMessage response = await servicePartitionClient.InvokeWithRetryAsync(
-                    client => ExecuteServiceCallAsync(client, context));
+                    client => ExecuteServiceCallAsync(client, context, contextRequestBody));
 
                 await response.CopyToCurrentContext(context);
             }
@@ -72,11 +86,25 @@ namespace C3.ServiceFabric.HttpServiceGateway
             }
         }
 
-        private async Task<HttpResponseMessage> ExecuteServiceCallAsync(HttpCommunicationClient client, HttpContext context)
+        private async Task<HttpResponseMessage> ExecuteServiceCallAsync(HttpCommunicationClient client, HttpContext context, byte[] contextRequestBody)
         {
-            HttpRequestMessage req = new HttpRequestMessage();
-            req.RequestUri = new Uri(context.Request.Path + context.Request.QueryString, UriKind.Relative);
-            req.CopyFromCurrentContext(context);
+            // create request and copy all details
+
+            HttpRequestMessage req = new HttpRequestMessage
+            {
+                Method = new HttpMethod(context.Request.Method),
+                RequestUri = new Uri(context.Request.Path + context.Request.QueryString, UriKind.Relative)
+            };
+
+            if (contextRequestBody != null)
+            {
+                req.Content = new ByteArrayContent(contextRequestBody);
+            }
+
+            req.CopyHeadersFromCurrentContext(context);
+            req.AddProxyHeaders(context);
+                        
+            // execute request
 
             HttpResponseMessage response = await client.HttpClient.SendAsync(req, context.RequestAborted);
 
