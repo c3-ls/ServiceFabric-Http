@@ -21,18 +21,8 @@ namespace C3.ServiceFabric.HttpServiceGateway
         public Func<HttpContext, string> NamedPartitionKeyResolver { get; set; }
 
         /// <summary>
-        /// Exception types which should not result in a retry operation.
+        /// Configuration options for the retry behavior of the HttpClient.
         /// </summary>
-        public Type[] DoNotRetryExceptionTypes { get; set; }
-
-        /// <summary>
-        /// The number of times a service request is retried in case of an error.
-        /// </summary>
-        public int MaxRetryCount { get; set; } = GlobalConfig.DefaultMaxRetryCount;
-
-        /// <summary>
-        /// The maximum amount of time to wait for one single service request. (this value is reset for every retry)
-        /// </summary>
-        public TimeSpan OperationTimeout { get; set; } = GlobalConfig.DefaultOperationTimeout;
+        public HttpCommunicationClientOptions HttpCommunication { get; set; } = new HttpCommunicationClientOptions();
     }
 }

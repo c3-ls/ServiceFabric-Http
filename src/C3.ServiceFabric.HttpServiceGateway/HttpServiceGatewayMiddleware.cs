@@ -36,9 +36,9 @@ namespace C3.ServiceFabric.HttpServiceGateway
                 throw new ArgumentException("Only one partitionKey-Resolver may be set.");
             }
 
-            if (options.OperationTimeout == null)
+            if (options.HttpCommunication == null)
             {
-                throw new ArgumentNullException("options.OperationTimeout");
+                throw new ArgumentNullException("options.HttpCommunication");
             }
 
             // "next" is not stored because this is a terminal middleware
@@ -48,9 +48,7 @@ namespace C3.ServiceFabric.HttpServiceGateway
             _httpCommunicationClientFactory = new HttpCommunicationClientFactory(
                 loggerFactory,
                 ServicePartitionResolver.GetDefault(),
-                _options.OperationTimeout,
-                _options.MaxRetryCount,
-                doNotRetryExceptionTypes: _options.DoNotRetryExceptionTypes);
+                _options.HttpCommunication);
         }
 
         public async Task Invoke(HttpContext context)
@@ -103,7 +101,7 @@ namespace C3.ServiceFabric.HttpServiceGateway
 
             req.CopyHeadersFromCurrentContext(context);
             req.AddProxyHeaders(context);
-                        
+
             // execute request
 
             HttpResponseMessage response = await client.HttpClient.SendAsync(req, context.RequestAborted);

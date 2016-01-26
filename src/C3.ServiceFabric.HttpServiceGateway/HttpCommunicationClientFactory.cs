@@ -19,30 +19,27 @@ namespace C3.ServiceFabric.HttpServiceGateway
     public class HttpCommunicationClientFactory : CommunicationClientFactoryBase<HttpCommunicationClient>
     {
         private static readonly Random _rand = new Random();
-
-        private readonly TimeSpan _maxRetryBackoffInterval = GlobalConfig.DefaultMaxRetryBackoffInterval;
-
         private readonly ILogger _logger;
 
-        private readonly TimeSpan _operationTimeout;
-        private readonly int _maxRetryCount;
+        private readonly HttpCommunicationClientOptions _options;
 
         public HttpCommunicationClientFactory(
-            ILoggerFactory loggerFactory, ServicePartitionResolver resolver, TimeSpan operationTimeout,
-            int maxRetryCount, IList<IExceptionHandler> exceptionHandlers = null, IEnumerable<Type> doNotRetryExceptionTypes = null)
-            : base(resolver, exceptionHandlers, doNotRetryExceptionTypes)
+            ILoggerFactory loggerFactory,
+            ServicePartitionResolver resolver,
+            HttpCommunicationClientOptions options,
+            IList<IExceptionHandler> exceptionHandlers = null)
+            : base(resolver, exceptionHandlers, options?.DoNotRetryExceptionTypes)
         {
             _logger = loggerFactory.CreateLogger(GlobalConfig.LoggerName);
 
-            _operationTimeout = operationTimeout;
-            _maxRetryCount = maxRetryCount;
+            _options = options ?? new HttpCommunicationClientOptions();
         }
 
         protected override Task<HttpCommunicationClient> CreateClientAsync(string endpoint, CancellationToken cancellationToken)
         {
             // Create a communication client. This doesn't establish a session with the server.
             Uri endpointUri = CreateEndpointUri(endpoint);
-            return Task.FromResult(new HttpCommunicationClient(endpointUri, _operationTimeout));
+            return Task.FromResult(new HttpCommunicationClient(endpointUri, _options.OperationTimeout));
         }
 
         protected override void AbortClient(HttpCommunicationClient client)
@@ -113,61 +110,64 @@ namespace C3.ServiceFabric.HttpServiceGateway
 
             // we got a response from the service - let's try to get the StatusCode to see if we should retry.
 
-            HttpStatusCode? httpStatusCode = null;
-            HttpWebResponse webResponse = null;
-            HttpResponseMessage responseMessage = null;
+            if (_options.RetryHttpStatusCodeErrors)
+            {
+                HttpStatusCode? httpStatusCode = null;
+                HttpWebResponse webResponse = null;
+                HttpResponseMessage responseMessage = null;
 
-            var httpEx = ex as HttpResponseException;
-            if (httpEx != null)
-            {
-                responseMessage = httpEx.Response;
-                httpStatusCode = httpEx.Response.StatusCode;
-            }
-            else if (webEx != null)
-            {
-                webResponse = webEx.Response as HttpWebResponse;
-                httpStatusCode = webResponse?.StatusCode;
-            }
-
-            if (httpStatusCode.HasValue)
-            {
-                if (httpStatusCode == HttpStatusCode.NotFound)
+                var httpEx = ex as HttpResponseException;
+                if (httpEx != null)
                 {
-                    // This could either mean we requested an endpoint that does not exist in the service API (a user error)
-                    // or the address that was resolved by fabric client is stale (transient runtime error) in which we should re-resolve.
-
-                    _logger.LogWarning("Retrying Service call. Reason: {Reason}", "HTTP 404");
-                    result = new ExceptionHandlingRetryResult
-                    {
-                        IsTransient = false,
-                        ExceptionId = "HTTP 404",
-                        RetryDelay = TimeSpan.FromMilliseconds(100),
-                        MaxRetryCount = 2
-                    };
-                    return true;
+                    responseMessage = httpEx.Response;
+                    httpStatusCode = httpEx.Response.StatusCode;
+                }
+                else if (webEx != null)
+                {
+                    webResponse = webEx.Response as HttpWebResponse;
+                    httpStatusCode = webResponse?.StatusCode;
                 }
 
-                if ((int)httpStatusCode >= 500 && (int)httpStatusCode < 600)
+                if (httpStatusCode.HasValue)
                 {
-                    // The address is correct, but the server processing failed.
-                    // Retry the operation without re-resolving the address.
-
-                    // we want to log the response in case it contains useful information (e.g. in dev environments)
-                    string errorResponse = null;
-                    if (webResponse != null)
+                    if (httpStatusCode == HttpStatusCode.NotFound)
                     {
-                        using (StreamReader streamReader = new StreamReader(webResponse.GetResponseStream()))
+                        // This could either mean we requested an endpoint that does not exist in the service API (a user error)
+                        // or the address that was resolved by fabric client is stale (transient runtime error) in which we should re-resolve.
+
+                        _logger.LogWarning("Retrying Service call. Reason: {Reason}", "HTTP 404");
+                        result = new ExceptionHandlingRetryResult
                         {
-                            errorResponse = streamReader.ReadToEnd();
-                        }
-                    }
-                    else if (responseMessage != null)
-                    {
-                        errorResponse = responseMessage.Content.ReadAsStringAsync().Result;
+                            IsTransient = false,
+                            ExceptionId = "HTTP 404",
+                            RetryDelay = TimeSpan.FromMilliseconds(100),
+                            MaxRetryCount = 2
+                        };
+                        return true;
                     }
 
-                    _logger.LogWarning("Retrying Service call. Reason: {Reason}, Details: {Details}", "HTTP " + (int)httpStatusCode, errorResponse);
-                    return this.CreateExceptionHandlingRetryResult(true, ex, out result);
+                    if ((int)httpStatusCode >= 500 && (int)httpStatusCode < 600)
+                    {
+                        // The address is correct, but the server processing failed.
+                        // Retry the operation without re-resolving the address.
+
+                        // we want to log the response in case it contains useful information (e.g. in dev environments)
+                        string errorResponse = null;
+                        if (webResponse != null)
+                        {
+                            using (StreamReader streamReader = new StreamReader(webResponse.GetResponseStream()))
+                            {
+                                errorResponse = streamReader.ReadToEnd();
+                            }
+                        }
+                        else if (responseMessage != null)
+                        {
+                            errorResponse = responseMessage.Content.ReadAsStringAsync().Result;
+                        }
+
+                        _logger.LogWarning("Retrying Service call. Reason: {Reason}, Details: {Details}", "HTTP " + (int)httpStatusCode, errorResponse);
+                        return CreateExceptionHandlingRetryResult(true, ex, out result);
+                    }
                 }
             }
 
@@ -180,9 +180,9 @@ namespace C3.ServiceFabric.HttpServiceGateway
             result = new ExceptionHandlingRetryResult()
             {
                 IsTransient = isTransient,
-                RetryDelay = TimeSpan.FromMilliseconds(_rand.NextDouble() * _maxRetryBackoffInterval.TotalMilliseconds),
+                RetryDelay = TimeSpan.FromMilliseconds(_rand.NextDouble() * _options.MaxRetryBackoffInterval.TotalMilliseconds),
                 ExceptionId = ex.GetType().Name,
-                MaxRetryCount = _maxRetryCount
+                MaxRetryCount = _options.MaxRetryCount
             };
             return true;
         }
