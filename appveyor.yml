@@ -33,7 +33,7 @@ before_build:
   - ps: dnu restore
 
 artifacts:
-  - path: src\artifacts\bin\C3.ServiceFabric.HttpServiceGateway\$(configuration)\*.nupkg
+  - path: src\artifacts\bin\**\$(configuration)\*.nupkg
     name: NugetPackage
 
 deploy:
