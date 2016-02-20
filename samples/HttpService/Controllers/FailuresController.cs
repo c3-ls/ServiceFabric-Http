@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace HttpService.Controllers
 {
-    [Route("api/[Controller]")]
+    [Route("api/[controller]")]
     public class FailuresController : Controller
     {
         [Route("Exception")]

@@ -46,8 +46,11 @@ namespace C3.ServiceFabric.HttpServiceGateway
         /// </summary>
         public static void CopyHeadersFromCurrentContext(this HttpRequestMessage target, HttpContext context)
         {
-            if (target == null) throw new ArgumentNullException(nameof(target));
-            if (context == null) throw new ArgumentNullException(nameof(context));
+            if (target == null)
+                throw new ArgumentNullException(nameof(target));
+
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
 
             // interesting links:
             // http://www.wiliam.com.au/wiliam-blog/web-design-sydney-relaying-an-httprequest-in-asp-net
@@ -70,8 +73,11 @@ namespace C3.ServiceFabric.HttpServiceGateway
         /// </summary>
         public static void AddProxyHeaders(this HttpRequestMessage target, HttpContext context)
         {
-            if (target == null) throw new ArgumentNullException(nameof(target));
-            if (context == null) throw new ArgumentNullException(nameof(context));
+            if (target == null)
+                throw new ArgumentNullException(nameof(target));
+
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
 
             // Via (will be added to an existing Via header)
             target.Headers.Add(HeaderNames.Via, "1.1 " + Environment.MachineName);

@@ -13,9 +13,7 @@ namespace C3.ServiceFabric.HttpServiceGateway
         public static IApplicationBuilder RunHttpServiceGateway(this IApplicationBuilder app, PathString pathMatch, HttpServiceGatewayOptions options)
         {
             if (app == null)
-            {
                 throw new ArgumentNullException(nameof(app));
-            }
 
             app.Map(pathMatch, x =>
             {
@@ -32,15 +30,12 @@ namespace C3.ServiceFabric.HttpServiceGateway
         public static IApplicationBuilder RunHttpServiceGateway(this IApplicationBuilder app, HttpServiceGatewayOptions options)
         {
             if (app == null)
-            {
                 throw new ArgumentNullException(nameof(app));
-            }
 
             if (options == null)
-            {
                 throw new ArgumentNullException(nameof(options));
-            }
 
+            // TODO - RC2: change to Options.Create(options)
             return app.UseMiddleware<HttpServiceGatewayMiddleware>(options);
         }
     }

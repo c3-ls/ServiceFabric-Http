@@ -26,8 +26,11 @@ namespace C3.ServiceFabric.HttpServiceGateway
         /// </summary>
         public static async Task CopyToCurrentContext(this HttpResponseMessage source, HttpContext context)
         {
-            if (source == null) throw new ArgumentNullException(nameof(source));
-            if (context == null) throw new ArgumentNullException(nameof(context));
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
 
             context.Response.StatusCode = (int)source.StatusCode;
 
@@ -54,7 +57,8 @@ namespace C3.ServiceFabric.HttpServiceGateway
 
         public static void AddResponseProxyHeaders(this HttpContext context)
         {
-            if (context == null) throw new ArgumentNullException(nameof(context));
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
 
             // http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.45
             // http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/RequestAndResponseBehaviorCustomOrigin.html
