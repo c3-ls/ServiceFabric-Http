@@ -37,12 +37,12 @@ deploy:
   
   # new release tag -> create GitHub release
   - provider: GitHub
-    release: v$(appveyor_build_version)
+    release: $(appveyor_repo_tag_name)
     description: "See milestone for release notes"
     draft: true
     prerelease: true
     auth_token:
       secure: JU9H+A+WwAtz4Xkcd/50N239EiX1o7OpEnmtiQGayR+Zc2ZHF8xrcPMRelHyJwZL
     on:
-      branch: master
+      branch: v*
       appveyor_repo_tag: true
