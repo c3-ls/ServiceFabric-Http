@@ -52,21 +52,19 @@ namespace HttpGateway
         /// </summary>
         private void ConfigureHttpServiceGateways(IApplicationBuilder app)
         {
-            // define one Map(..) entry per service.
+            // define one entry per service.
 
-            app.Map("/service", appBuilder =>
+            app.RunHttpServiceGateway("/service", new HttpServiceGatewayOptions
             {
-                appBuilder.RunHttpServiceGateway(new HttpServiceGatewayOptions
-                {
-                    ServiceName = new Uri("fabric:/GatewaySample/HttpServiceService")
-                });
+                ServiceName = new Uri("fabric:/GatewaySample/HttpServiceService")
             });
 
-            //app.Map("/someOtherService", appBuilder =>
+            // if you need to do multiple things within the path branch, you can use app.Map():
+            //app.Map("/service", appBuilder =>
             //{
             //    appBuilder.RunHttpServiceGateway(new HttpServiceGatewayOptions
             //    {
-            //        ServiceName = new Uri("fabric:/GatewaySample/MySecondService")
+            //        ServiceName = new Uri("fabric:/GatewaySample/HttpServiceService")
             //    });
             //});
         }
