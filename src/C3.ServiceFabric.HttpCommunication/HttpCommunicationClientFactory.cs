@@ -1,38 +1,39 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.OptionsModel;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Client;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace C3.ServiceFabric.HttpServiceGateway
+namespace C3.ServiceFabric.HttpCommunication
 {
     /// <summary>
     /// Factory that creates clients that know to communicate with the service.
     /// Contains a service partition resolver that resolves a partition key
     /// and sets BaseAddress to the address of the replica that should serve a request.
     /// </summary>
-    public class HttpCommunicationClientFactory : CommunicationClientFactoryBase<HttpCommunicationClient>
+    public class HttpCommunicationClientFactory : CommunicationClientFactoryBase<HttpCommunicationClient>, IHttpCommunicationClientFactory
     {
         private static readonly Random _rand = new Random();
         private readonly ILogger _logger;
 
-        private readonly HttpCommunicationClientOptions _options;
+        private readonly HttpCommunicationOptions _options;
 
         public HttpCommunicationClientFactory(
             ILoggerFactory loggerFactory,
             ServicePartitionResolver resolver,
-            HttpCommunicationClientOptions options,
-            IList<IExceptionHandler> exceptionHandlers = null)
-            : base(resolver, exceptionHandlers, options?.DoNotRetryExceptionTypes)
+            IOptions<HttpCommunicationOptions> options)
+            : base(resolver, options?.Value?.ExceptionHandlers, options?.Value?.DoNotRetryExceptionTypes)
         {
-            _logger = loggerFactory.CreateLogger(GlobalConfig.LoggerName);
+            if (options == null)
+                throw new ArgumentNullException(nameof(options));
 
-            _options = options ?? new HttpCommunicationClientOptions();
+            _logger = loggerFactory.CreateLogger(HttpCommunicationDefaults.LoggerName);
+            _options = options.Value;
         }
 
         protected override Task<HttpCommunicationClient> CreateClientAsync(string endpoint, CancellationToken cancellationToken)

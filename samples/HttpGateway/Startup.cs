@@ -1,4 +1,5 @@
-﻿using C3.ServiceFabric.HttpServiceGateway;
+﻿using C3.ServiceFabric.HttpCommunication;
+using C3.ServiceFabric.HttpServiceGateway;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
@@ -14,24 +15,27 @@ namespace HttpGateway
     {
         public IConfigurationRoot Configuration { get; set; }
 
-        public Startup(IHostingEnvironment env)
+        public Startup(ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddConsole(LogLevel.Verbose);
+
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables();
+
             Configuration = builder.Build();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // this adds the required services
+            services.Configure<HttpCommunicationOptions>(Configuration.GetSection("HttpCommunication"));
+            services.AddServiceFabricHttpCommunication();
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
-            // TODO - must be changed in a production app
+            // must be changed in a production app
             app.UseDeveloperExceptionPage();
 
             ConfigureHttpServiceGateways(app);

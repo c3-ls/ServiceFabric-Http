@@ -1,15 +1,14 @@
-{
+﻿{
   "version": "1.0.0-*",
   "compilationOptions": {
     "emitEntryPoint": true
   },
 
   "dependencies": {
-    "C3.ServiceFabric.HttpServiceGateway": "",
+    "C3.ServiceFabric.HttpCommunication": "",
     "Microsoft.AspNet.Diagnostics": "1.0.0-rc1-final",
     "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
-    "Microsoft.ServiceFabric.AspNet.Hosting": "1.0.0-rc1"
+    "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final"
   },
 
   "commands": {
@@ -22,12 +21,10 @@
 
   "exclude": [
     "wwwroot",
-    "node_modules",
-    "PackageRoot"
+    "node_modules"
   ],
   "publishExclude": [
     "**.user",
-    "**.vspscc",
-    "PackageRoot"
+    "**.vspscc"
   ]
 }

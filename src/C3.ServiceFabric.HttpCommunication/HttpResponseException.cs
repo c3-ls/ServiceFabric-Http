@@ -2,8 +2,11 @@
 using System.Net.Http;
 using System.Runtime.Serialization;
 
-namespace C3.ServiceFabric.HttpServiceGateway
+namespace C3.ServiceFabric.HttpCommunication
 {
+    /// <summary>
+    /// An exception that contains the actual response.
+    /// </summary>
     public class HttpResponseException : Exception
     {
         public HttpResponseMessage Response { get; }

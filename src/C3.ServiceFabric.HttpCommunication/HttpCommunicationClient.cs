@@ -3,7 +3,7 @@ using System;
 using System.Fabric;
 using System.Net.Http;
 
-namespace C3.ServiceFabric.HttpServiceGateway
+namespace C3.ServiceFabric.HttpCommunication
 {
     /// <summary>
     /// Communication client that wraps the logic for talking to the service.

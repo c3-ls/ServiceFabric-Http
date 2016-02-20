@@ -1,10 +1,10 @@
 ﻿{
   "version": "0.3.0-*",
-  "description": "ASP.NET Core gateway middleware for HTTP-based \"Azure Service Fabric\" services",
+  "description": "ASP.NET Core library for communication with HTTP-based \"Azure Service Fabric\" services",
   "authors": [ "C3 Loyalty Services" ],
   "projectUrl": "https://github.com/c3-ls/ServiceFabric-HttpServiceGateway",
   "licenseUrl": "https://github.com/c3-ls/ServiceFabric-HttpServiceGateway/blob/master/LICENSE",
-  "tags": ["ServiceFabric", "Gateway", "HttpGateway", "Azure", "Proxy", "HttpProxy", "AspNetCore"],
+  "tags": ["ServiceFabric", "ReliableServices", "HttpClient", "Retry", "AspNetCore"],
   
   "compilationOptions": {
     "warningsAsErrors": true
@@ -16,9 +16,9 @@
   },
 
   "dependencies": {
-    "C3.ServiceFabric.HttpCommunication": "",
     "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc1-final",
-    "Microsoft.ServiceFabric.AspNet.Hosting": "1.0.0-rc1",
+    "Microsoft.Extensions.OptionsModel": "1.0.0-rc1-final",
+    "Microsoft.ServiceFabric.Services": "1.4.87-preview",
     "System.Net.Http": "4.0.1-beta-23516"
   },
 

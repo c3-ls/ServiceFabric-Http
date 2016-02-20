@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNet.Builder;
+﻿using C3.ServiceFabric.HttpCommunication;
+using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Client;
 using System;
 using System.IO;
@@ -18,37 +18,38 @@ namespace C3.ServiceFabric.HttpServiceGateway
     {
         private readonly HttpServiceGatewayOptions _options;
         private readonly ILogger _logger;
-        private readonly HttpCommunicationClientFactory _httpCommunicationClientFactory;
+        private readonly IHttpCommunicationClientFactory _httpCommunicationClientFactory;
 
-        public HttpServiceGatewayMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, HttpServiceGatewayOptions options)
+        public HttpServiceGatewayMiddleware(
+            RequestDelegate next,
+            ILoggerFactory loggerFactory,
+            HttpServiceGatewayOptions gatewayOptions,
+            IHttpCommunicationClientFactory httpCommunicationClientFactory)
         {
-            if (next == null) throw new ArgumentNullException(nameof(next));
-            if (loggerFactory == null) throw new ArgumentNullException(nameof(loggerFactory));
-            if (options == null) throw new ArgumentNullException(nameof(options));
+            // TODO - RC2: change parameter to IOptions<HttpServiceGatewayOptions>
 
-            if (options.ServiceName == null)
-            {
+            if (next == null)
+                throw new ArgumentNullException(nameof(next));
+
+            if (loggerFactory == null)
+                throw new ArgumentNullException(nameof(loggerFactory));
+
+            if (gatewayOptions == null)
+                throw new ArgumentNullException(nameof(gatewayOptions));
+
+            if (httpCommunicationClientFactory == null)
+                throw new ArgumentNullException(nameof(httpCommunicationClientFactory));
+            
+            if (gatewayOptions.ServiceName == null)
                 throw new ArgumentNullException("options.ServiceFabricUri");
-            }
-
-            if (options.NamedPartitionKeyResolver != null && options.Int64PartitionKeyResolver != null)
-            {
-                throw new ArgumentException("Only one partitionKey-Resolver may be set.");
-            }
-
-            if (options.HttpCommunication == null)
-            {
-                throw new ArgumentNullException("options.HttpCommunication");
-            }
+            
+            if (gatewayOptions.NamedPartitionKeyResolver != null && gatewayOptions.Int64PartitionKeyResolver != null)
+                throw new ArgumentException("Only one PartitionKey-Resolver may be set.");
 
             // "next" is not stored because this is a terminal middleware
-            _logger = loggerFactory.CreateLogger(GlobalConfig.LoggerName);
-            _options = options;
-
-            _httpCommunicationClientFactory = new HttpCommunicationClientFactory(
-                loggerFactory,
-                ServicePartitionResolver.GetDefault(),
-                _options.HttpCommunication);
+            _logger = loggerFactory.CreateLogger(HttpServiceGatewayDefaults.LoggerName);
+            _options = gatewayOptions;
+            _httpCommunicationClientFactory = httpCommunicationClientFactory;
         }
 
         public async Task Invoke(HttpContext context)

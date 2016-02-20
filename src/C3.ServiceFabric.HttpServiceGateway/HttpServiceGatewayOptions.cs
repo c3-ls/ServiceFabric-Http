@@ -3,6 +3,9 @@ using System;
 
 namespace C3.ServiceFabric.HttpServiceGateway
 {
+    /// <summary>
+    /// Options for the HttpServiceGateway middleware.
+    /// </summary>
     public class HttpServiceGatewayOptions
     {
         /// <summary>
@@ -19,10 +22,5 @@ namespace C3.ServiceFabric.HttpServiceGateway
         /// Delegate for resolving string partitioned services.
         /// </summary>
         public Func<HttpContext, string> NamedPartitionKeyResolver { get; set; }
-
-        /// <summary>
-        /// Configuration options for the retry behavior of the HttpClient.
-        /// </summary>
-        public HttpCommunicationClientOptions HttpCommunication { get; set; } = new HttpCommunicationClientOptions();
     }
 }
