@@ -68,6 +68,8 @@ namespace C3.ServiceFabric.HttpCommunication
                 throw new InvalidOperationException("The endpoint address is not valid. Please resolve again.");
             }
 
+            // BaseAddress must end with a trailing slash - this is critical for the usage of HttpClient!
+            // http://stackoverflow.com/questions/23438416/why-is-httpclient-baseaddress-not-working
             if (!endpoint.EndsWith("/"))
             {
                 endpoint = endpoint + "/";
@@ -163,7 +165,11 @@ namespace C3.ServiceFabric.HttpCommunication
                         }
                         else if (responseMessage != null)
                         {
-                            errorResponse = responseMessage.Content.ReadAsStringAsync().Result;
+                            // not sure if just calling ReadAsStringAsync().Result can result in a deadlock.
+                            // so better safe than sorry...
+                            // http://stackoverflow.com/questions/22628087/calling-async-method-synchronously
+                            // AsyncEx library would be good but I don't want to take a dependency on that just for this one case.
+                            errorResponse = Task.Run(() => responseMessage.Content.ReadAsStringAsync()).Result;
                         }
 
                         _logger.LogWarning("Retrying Service call. Reason: {Reason}, Details: {Details}", "HTTP " + (int)httpStatusCode, errorResponse);

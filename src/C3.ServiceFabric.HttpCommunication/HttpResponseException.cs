@@ -5,7 +5,8 @@ using System.Runtime.Serialization;
 namespace C3.ServiceFabric.HttpCommunication
 {
     /// <summary>
-    /// An exception that contains the actual response.
+    /// An exception that contains the actual response. 
+    /// Throw this in your code if you want to have the actual response body in your log.
     /// </summary>
     public class HttpResponseException : Exception
     {
