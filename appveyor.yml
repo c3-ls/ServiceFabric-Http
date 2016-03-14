@@ -6,6 +6,7 @@ init:
 
 install:
   - ps: "&{$Branch='dev';iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}"
+  - ps: dnvm install 1.0.0-rc2-16595 -r clr -a x86 -u
   - ps: dnvm install 1.0.0-rc2-16595 -r clr -a x64 -u -p
   - ps: dnvm list
   
