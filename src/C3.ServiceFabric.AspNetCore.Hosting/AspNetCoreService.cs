@@ -47,6 +47,7 @@ namespace C3.ServiceFabric.AspNetCore.Hosting
                 var webHostBuilder = new WebHostBuilder()
                     .UseConfiguration(_configuration)
                     .UseServer("Microsoft.AspNetCore.Server.Kestrel")
+                    .UseStartup(application.ApplicationName)
                     .ConfigureServices(services =>
                     {
                         services.AddSingleton<FabricClient>();

@@ -16,7 +16,7 @@
       <EntryPoint>
          <ExeHost>
             <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16595\bin\dnx.exe</Program>
-            <Arguments>--appbase approot\src\HttpService Microsoft.Dnx.ApplicationHost C3.ServiceFabric.AspNetCore.Hosting --application HttpService</Arguments>
+            <Arguments>--appbase approot\src\HttpService Microsoft.Dnx.ApplicationHost C3.ServiceFabric.AspNetCore.Hosting</Arguments>
             <WorkingFolder>CodePackage</WorkingFolder>
             <ConsoleRedirection FileRetentionCount="5" FileMaxSizeInKb="2048" />
          </ExeHost>
