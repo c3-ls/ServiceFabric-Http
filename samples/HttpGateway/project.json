@@ -5,15 +5,17 @@
   },
 
   "dependencies": {
+    "C3.ServiceFabric.AspNetCore.Hosting": "",
     "C3.ServiceFabric.HttpServiceGateway": "",
-    "Microsoft.AspNet.Diagnostics": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
-    "Microsoft.ServiceFabric.AspNet.Hosting": "1.0.0-rc1"
+
+    "Microsoft.AspNetCore.Diagnostics": "1.0.0-*",
+    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-*",
+    "Microsoft.Extensions.Logging.Console": "1.0.0-*",
+    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0-*"
   },
 
   "commands": {
-    "web": "Microsoft.AspNet.Server.Kestrel"
+    "web": "HttpGateway"
   },
 
   "frameworks": {

@@ -1,6 +1,5 @@
 ﻿using C3.ServiceFabric.HttpCommunication;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.ServiceFabric.Services.Communication.Client;
 using System;
 using System.Net.Http;

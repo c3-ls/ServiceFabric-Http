@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNet.Http;
-using Microsoft.Net.Http.Headers;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -80,7 +79,7 @@ namespace C3.ServiceFabric.HttpServiceGateway
                 throw new ArgumentNullException(nameof(context));
 
             // Via (will be added to an existing Via header)
-            target.Headers.Add(HeaderNames.Via, "1.1 " + Environment.MachineName);
+            target.Headers.Add("Via", "1.1 " + Environment.MachineName);
 
             // proxy headers haven't been standardized until 2014 (https://tools.ietf.org/html/rfc7239)
             // Even now, this standard is not very common and most systems only support the non-standard headers.

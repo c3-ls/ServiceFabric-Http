@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -35,6 +35,16 @@ namespace HttpService
             app.UseMvc();
         }
 
-        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
+        public static void Main(string[] args)
+        {
+            var builder = new WebHostBuilder()
+                .UseDefaultConfiguration(args)
+                .UseServer("Microsoft.AspNetCore.Server.Kestrel")
+                .UseStartup<Startup>()
+                .UseIISPlatformHandlerUrl()
+                .Build();
+
+            builder.Run();
+        }
     }
 }

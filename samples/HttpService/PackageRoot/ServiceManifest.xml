@@ -15,8 +15,8 @@
    <CodePackage Name="C" Version="1.0.0">
       <EntryPoint>
          <ExeHost>
-            <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc1-update1\bin\dnx.exe</Program>
-            <Arguments>--appbase approot\src\HttpService Microsoft.Dnx.ApplicationHost Microsoft.ServiceFabric.AspNet.Hosting --server Microsoft.AspNet.Server.WebListener</Arguments>
+            <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16595\bin\dnx.exe</Program>
+            <Arguments>--appbase approot\src\HttpService Microsoft.Dnx.ApplicationHost C3.ServiceFabric.AspNetCore.Hosting --application HttpService</Arguments>
             <WorkingFolder>CodePackage</WorkingFolder>
             <ConsoleRedirection FileRetentionCount="5" FileMaxSizeInKb="2048" />
          </ExeHost>

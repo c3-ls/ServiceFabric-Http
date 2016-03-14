@@ -2,7 +2,7 @@
   "projects": [ "src", "samples" ],
 
   "sdk": {
-    "version": "1.0.0-rc1-update1",
+    "version": "1.0.0-rc2-16595",
     "architecture": "x64",
     "runtime": "clr"
   }

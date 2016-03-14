@@ -1,7 +1,7 @@
 ﻿using C3.ServiceFabric.HttpCommunication;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -15,7 +15,7 @@ namespace HttpDirect
 
         public Startup(ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(LogLevel.Verbose);
+            loggerFactory.AddConsole(LogLevel.Debug);
 
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false)
@@ -66,6 +66,15 @@ namespace HttpDirect
             });
         }
 
-        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
+        public static void Main(string[] args)
+        {
+            var builder = new WebHostBuilder()
+                .UseDefaultConfiguration(args)
+                .UseServer("Microsoft.AspNetCore.Server.Kestrel")
+                .UseStartup<Startup>()
+                .Build();
+
+            builder.Run();
+        }
     }
 }

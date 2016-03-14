@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNet.Http;
-using Microsoft.Net.Http.Headers;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,7 +61,7 @@ namespace C3.ServiceFabric.HttpServiceGateway
 
             // http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.45
             // http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/RequestAndResponseBehaviorCustomOrigin.html
-            context.Response.Headers.Add(HeaderNames.Via, "1.1 " + Environment.MachineName);
+            context.Response.Headers.Add("Via", "1.1 " + Environment.MachineName);
         }
     }
 }
