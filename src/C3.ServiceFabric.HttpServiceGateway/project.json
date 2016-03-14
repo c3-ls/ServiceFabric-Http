@@ -1,5 +1,5 @@
 ﻿{
-  "version": "0.3.1-*",
+  "version": "0.4.0-*",
   "description": "ASP.NET Core gateway middleware for HTTP-based \"Azure Service Fabric\" services",
   "authors": [ "C3 Loyalty Services" ],
   "projectUrl": "https://github.com/c3-ls/ServiceFabric-HttpServiceGateway",
