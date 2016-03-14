@@ -25,7 +25,7 @@ Get-ChildItem -Filter project.json -Recurse | ForEach-Object {
     $json = (Get-Content -Raw -Path $_.FullName | ConvertFrom-Json)
 
     $originalVersion = $json.version
-    $newVersion = ($json.version).TrimEnd('*', '-') + "-build" + $env:APPVEYOR_BUILD_NUMBER
+    $newVersion = ($json.version).TrimEnd('*', '-') + "-" + $env:APPVEYOR_BUILD_NUMBER
 
     $json.version = $newVersion
     
