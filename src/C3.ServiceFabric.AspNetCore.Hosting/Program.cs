@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.PlatformAbstractions;
 using System;
 using System.Diagnostics;
@@ -17,8 +18,8 @@ namespace C3.ServiceFabric.AspNetCore.Hosting
                     IApplicationEnvironment appEnv = PlatformServices.Default.Application;
 
                     IConfigurationRoot configurationRoot = new ConfigurationBuilder()
-                        .AddJsonFile("hosting.json", true)
-                        .AddEnvironmentVariables()
+                        .AddJsonFile(WebHostDefaults.HostingJsonFile, true)
+                        .AddEnvironmentVariables(prefix: WebHostDefaults.EnvironmentVariablesPrefix)
                         .AddCommandLine(args)
                         .Build();
 
