@@ -7,7 +7,6 @@
   "dependencies": {
     "C3.ServiceFabric.AspNetCore.Hosting": "",
 
-    "Microsoft.AspNetCore.IISPlatformHandler": "1.0.0-*",
     "Microsoft.AspNetCore.Mvc": "1.0.0-*",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-*",
     "Microsoft.AspNetCore.StaticFiles": "1.0.0-*",

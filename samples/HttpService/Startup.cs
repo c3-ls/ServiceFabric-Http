@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using C3.ServiceFabric.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,8 +29,6 @@ namespace HttpService
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseIISPlatformHandler();
-
             app.UseStaticFiles();
 
             app.UseMvc();
@@ -37,14 +36,14 @@ namespace HttpService
 
         public static void Main(string[] args)
         {
-            var builder = new WebHostBuilder()
-                .UseDefaultConfiguration(args)
-                .UseServer("Microsoft.AspNetCore.Server.Kestrel")
-                .UseStartup<Startup>()
-                .UseIISPlatformHandlerUrl()
-                .Build();
-
-            builder.Run();
+            using (var builder = new ServiceFabricWebHostBuilder(args))
+            {
+                builder
+                    .UseServer("Microsoft.AspNetCore.Server.Kestrel")
+                    .UseStartup<Startup>()
+                    .Build()
+                    .Run();
+            }
         }
     }
 }

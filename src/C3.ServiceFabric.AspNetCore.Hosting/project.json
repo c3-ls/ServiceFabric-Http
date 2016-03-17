@@ -1,23 +1,18 @@
 ﻿{
   "version": "0.4.0-rc2-*",
-  "description": "ASP.NET Core ServiceFabric host for ASP.NET Core RC2 daily builds",
+  "description": "ASP.NET Core ServiceFabric hosting library for ASP.NET Core RC2 daily builds",
   "authors": [ "C3 Loyalty Services" ],
   "projectUrl": "https://github.com/c3-ls/ServiceFabric-HttpServiceGateway",
   "licenseUrl": "https://github.com/c3-ls/ServiceFabric-HttpServiceGateway/blob/master/LICENSE",
   "tags": [ "ServiceFabric", "ReliableServices", "Hosting", "AspNetCore" ],
 
   "compilationOptions": {
-    "emitEntryPoint": true,
     "warningsAsErrors": true
   },
 
   "dependencies": {
     "Microsoft.AspNetCore.Hosting": "1.0.0-rc2-20100",
     "Microsoft.ServiceFabric.Services": "1.5.175-preview"
-  },
-
-  "commands": {
-    "C3.ServiceFabric.AspNetCore.Hosting": "C3.ServiceFabric.AspNetCore.Hosting"
   },
 
   "frameworks": {

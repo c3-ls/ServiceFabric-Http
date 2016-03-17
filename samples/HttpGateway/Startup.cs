@@ -1,4 +1,5 @@
-﻿using C3.ServiceFabric.HttpCommunication;
+﻿using C3.ServiceFabric.AspNetCore.Hosting;
+using C3.ServiceFabric.HttpCommunication;
 using C3.ServiceFabric.HttpServiceGateway;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -83,13 +84,14 @@ namespace HttpGateway
 
         public static void Main(string[] args)
         {
-            var builder = new WebHostBuilder()
-                 .UseDefaultConfiguration(args)
-                 .UseServer("Microsoft.AspNetCore.Server.Kestrel")
-                 .UseStartup<Startup>()
-                 .Build();
-
-            builder.Run();
+            using (var builder = new ServiceFabricWebHostBuilder(args))
+            {
+                builder
+                     .UseServer("Microsoft.AspNetCore.Server.Kestrel")
+                     .UseStartup<Startup>()
+                     .Build()
+                     .Run();
+            }
         }
     }
 }

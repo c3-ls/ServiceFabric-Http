@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Server.Features;
 using Microsoft.Extensions.PlatformAbstractions;
 using System;
-using System.Diagnostics;
 using System.Fabric;
-using System.Fabric.Description;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,113 +10,59 @@ namespace C3.ServiceFabric.AspNetCore.Hosting
 {
     public class AspNetCoreService : IStatelessServiceInstance
     {
-        private string _url;
+        private readonly IWebHost _webHost;
 
-        private readonly IConfiguration _configuration;
-
-        private IWebHost _host;
-
-        public AspNetCoreService(IConfiguration configuration)
+        public AspNetCoreService(IWebHost webHost)
         {
-            _configuration = configuration;
+            if (webHost == null)
+                throw new ArgumentNullException(nameof(webHost));
+
+            _webHost = webHost;
         }
 
         public void Initialize(StatelessServiceInitializationParameters initializationParameters)
         {
-            try
-            {
-                IApplicationEnvironment application = PlatformServices.Default.Application;
-                if (_configuration["server.urls"] == null)
-                {
-                    string endpointName = _configuration["fabric.endpoint"] ?? string.Format("{0}Endpoint", GetServiceTypeName(_configuration, application));
-                    EndpointResourceDescription endpoint = initializationParameters.CodePackageActivationContext.GetEndpoint(endpointName);
-
-                    _url = $"{endpoint.Protocol}://{FabricRuntime.GetNodeContext().IPAddressOrFQDN}:{endpoint.Port}";
-                    _configuration["server.urls"] = _url;
-                }
-                else
-                {
-                    _url = _configuration["server.urls"];
-                }
-
-                Console.WriteLine("Initializing URL: " + _url);
-
-                var webHostBuilder = new WebHostBuilder()
-                    .UseConfiguration(_configuration)
-                    .UseServer("Microsoft.AspNetCore.Server.Kestrel")
-                    .UseStartup(application.ApplicationName)
-                    .ConfigureServices(services =>
-                    {
-                        services.AddSingleton<FabricClient>();
-                    });
-
-                _host = webHostBuilder.Build();
-            }
-            catch (Exception ex)
-            {
-                EventLog.WriteEntry("Application", ex.ToString(), EventLogEntryType.Error);
-                Console.WriteLine(ex.ToString());
-
-                throw;
-            }
+            Console.WriteLine("AspNetCoreService: Initialize");
         }
 
         public Task<string> OpenAsync(IStatelessServicePartition partition, CancellationToken cancellationToken)
         {
-            try
-            {
-                Console.WriteLine(string.Format("Starting on URL: {0}", _url));
-                EventLog.WriteEntry("Application", string.Format("Starting on URL: {0}", _url), EventLogEntryType.Information);
+            Console.WriteLine("AspNetCoreService: OpenAsync");
 
-                Start();
+            _webHost.Start();
 
-                return Task.FromResult(_url);
-            }
-            catch (Exception ex)
-            {
-                EventLog.WriteEntry("Application", ex.ToString(), EventLogEntryType.Error);
-                Console.WriteLine(ex.ToString());
+            Console.WriteLine("AspNetCoreService: WebHost started");
 
-                Stop();
-            }
-            return null;
-        }
+            var serverAddressesFeature = _webHost.ServerFeatures.Get<IServerAddressesFeature>();
+            string addresses = string.Join(";", serverAddressesFeature.Addresses);
 
-        public void Start()
-        {
-            if (_host == null)
-            {
-                EventLog.WriteEntry("Application", "_hostingEngine is null", EventLogEntryType.Error);
-                return;
-            }
-
-            _host.Start();
+            Console.WriteLine("AspNetCoreService: Returning Addresses " + addresses);
+            return Task.FromResult(addresses);
         }
 
         public Task CloseAsync(CancellationToken cancellationToken)
         {
+            Console.WriteLine("AspNetCoreService: CloseAsync");
+
             Stop();
             return Task.FromResult(true);
         }
 
         public void Stop()
         {
-            _host?.Dispose();
+            _webHost?.Dispose();
         }
 
         public void Abort()
         {
+            Console.WriteLine("AspNetCoreService: Abort");
+
             Stop();
         }
 
-        public static string GetServiceTypeName(IConfiguration config, IApplicationEnvironment appEnv)
+        public static string GetServiceTypeName(IApplicationEnvironment appEnv)
         {
-            string serviceTypeName;
-            if ((serviceTypeName = config["serviceType"]) == null)
-            {
-                serviceTypeName = string.Format("{0}Type", config["app"] ?? appEnv.ApplicationName);
-            }
-            return serviceTypeName;
+            return string.Format("{0}Type", appEnv.ApplicationName);
         }
     }
 }

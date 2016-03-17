@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Fabric;
 
@@ -6,16 +6,16 @@ namespace C3.ServiceFabric.AspNetCore.Hosting
 {
     public class AspNetCoreServiceFactory : IStatelessServiceFactory
     {
-        private readonly IConfiguration _configuration;
+        private readonly IWebHost _webHost;
 
-        public AspNetCoreServiceFactory(IConfiguration configuration)
+        public AspNetCoreServiceFactory(IWebHost webHost)
         {
-            _configuration = configuration;
+            _webHost = webHost;
         }
 
         public IStatelessServiceInstance CreateInstance(string serviceTypeName, Uri serviceName, byte[] initializationData, Guid partitionId, long instanceId)
         {
-            return new AspNetCoreService(_configuration);
+            return new AspNetCoreService(_webHost);
         }
     }
 }
