@@ -17,11 +17,13 @@
 
   "dependencies": {
     "C3.ServiceFabric.HttpCommunication": "",
-    "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-*",
-    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-*"
+    "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-rc2-20100",
+    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-20100"
   },
 
   "frameworks": {
-    "dnx451": { }
+    "net451": {
+      "frameworkAssemblies": {}
+    }
   }
 }

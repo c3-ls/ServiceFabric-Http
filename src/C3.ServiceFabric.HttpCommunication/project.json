@@ -16,13 +16,19 @@
   },
 
   "dependencies": {
-    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-*",
-    "Microsoft.Extensions.Options": "1.0.0-*",
+    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-20100",
+    "Microsoft.Extensions.Options": "1.0.0-rc2-20100",
     "Microsoft.ServiceFabric.Services": "1.5.175-preview",
     "System.Net.Http": "4.0.1-beta-23516"
   },
 
   "frameworks": {
-    "dnx451": { }
+    "net451": {
+      "frameworkAssemblies": {
+        "System.ComponentModel": "",
+        "System.Runtime": "",
+        "System.Threading.Tasks": ""
+      }
+    }
   }
 }

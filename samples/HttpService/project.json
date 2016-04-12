@@ -7,14 +7,14 @@
   "dependencies": {
     "C3.ServiceFabric.AspNetCore.Hosting": "",
 
-    "Microsoft.AspNetCore.Mvc": "1.0.0-*",
-    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-*",
-    "Microsoft.AspNetCore.StaticFiles": "1.0.0-*",
-    "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-*",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0-*",
-    "Microsoft.Extensions.Logging": "1.0.0-*",
-    "Microsoft.Extensions.Logging.Console": "1.0.0-*",
-    "Microsoft.Extensions.Logging.Debug": "1.0.0-*"
+    "Microsoft.AspNetCore.Mvc": "1.0.0-rc2-20100",
+    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-20100",
+    "Microsoft.AspNetCore.StaticFiles": "1.0.0-rc2-20100",
+    "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc2-20100",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-20100",
+    "Microsoft.Extensions.Logging": "1.0.0-rc2-20100",
+    "Microsoft.Extensions.Logging.Console": "1.0.0-rc2-20100",
+    "Microsoft.Extensions.Logging.Debug": "1.0.0-rc2-20100"
   },
 
   "commands": {
