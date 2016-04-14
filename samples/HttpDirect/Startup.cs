@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
 
 namespace HttpDirect
 {
@@ -60,7 +59,7 @@ namespace HttpDirect
                 appBuilder.UseMiddleware<DirectCommunicationMiddleware>();
             });
 
-            app.Run(async (context) =>
+            app.Run(async context =>
             {
                 await context.Response.WriteAsync("Hello World!");
             });
@@ -69,8 +68,8 @@ namespace HttpDirect
         public static void Main(string[] args)
         {
             var builder = new WebHostBuilder()
-                .UseDefaultConfiguration(args)
-                .UseServer("Microsoft.AspNetCore.Server.Kestrel")
+                .UseDefaultHostingConfiguration(args)
+                .UseKestrel()
                 .UseStartup<Startup>()
                 .Build();
 

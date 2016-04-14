@@ -5,15 +5,15 @@
   },
 
   "dependencies": {
-    "C3.ServiceFabric.AspNetCore.Hosting": "",
+    "C3.ServiceFabric.AspNetCore.Hosting": "0.4.0-*",
 
-    "Microsoft.AspNetCore.Mvc": "1.0.0-rc2-20100",
-    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-20100",
-    "Microsoft.AspNetCore.StaticFiles": "1.0.0-rc2-20100",
-    "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc2-20100",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-20100",
-    "Microsoft.Extensions.Logging": "1.0.0-rc2-20100",
-    "Microsoft.Extensions.Logging.Console": "1.0.0-rc2-20100"
+    "Microsoft.AspNetCore.Mvc": "1.0.0-rc2-*",
+    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-*",
+    "Microsoft.AspNetCore.StaticFiles": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Logging": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Logging.Console": "1.0.0-rc2-*"
   },
 
   "commands": {
@@ -21,17 +21,14 @@
   },
 
   "frameworks": {
-    "net451": { }
+    "net451": {
+      "frameworkAssemblies": {
+        "System.Runtime": ""
+      }
+    }
   },
 
-  "exclude": [
-    "wwwroot",
-    "node_modules",
-    "PackageRoot"
-  ],
-  "publishExclude": [
-    "**.user",
-    "**.vspscc",
-    "PackageRoot"
+  "content": [
+    "appsettings.json"
   ]
 }

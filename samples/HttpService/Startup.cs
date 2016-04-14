@@ -38,7 +38,7 @@ namespace HttpService
             using (var builder = new ServiceFabricWebHostBuilder(args))
             {
                 builder
-                    .UseServer("Microsoft.AspNetCore.Server.Kestrel")
+                    .UseKestrel()
                     .UseStartup<Startup>()
                     .Build()
                     .Run();

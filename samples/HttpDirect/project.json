@@ -5,12 +5,12 @@
   },
 
   "dependencies": {
-    "C3.ServiceFabric.HttpCommunication": "",
+    "C3.ServiceFabric.HttpCommunication": "0.4.0-*",
 
-    "Microsoft.AspNetCore.Diagnostics": "1.0.0-rc2-20100",
-    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-20100",
-    "Microsoft.Extensions.Logging.Console": "1.0.0-rc2-20100",
-    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0-rc2-20100"
+    "Microsoft.AspNetCore.Diagnostics": "1.0.0-rc2-*",
+    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Logging.Console": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0-rc2-*"
   },
 
   "commands": {
@@ -21,12 +21,7 @@
     "net451": { }
   },
 
-  "exclude": [
-    "wwwroot",
-    "node_modules"
-  ],
-  "publishExclude": [
-    "**.user",
-    "**.vspscc"
+  "content": [
+    "appsettings.json"
   ]
 }

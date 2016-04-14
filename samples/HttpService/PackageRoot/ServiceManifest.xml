@@ -15,7 +15,7 @@
    <CodePackage Name="C" Version="1.0.0">
       <EntryPoint>
          <ExeHost>
-            <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-16595\bin\dnx.exe</Program>
+            <Program>approot\runtimes\dnx-clr-win-x64.1.0.0-rc2-20221\bin\dnx.exe</Program>
             <Arguments>-p approot\src\HttpService web --fabric true</Arguments>
             <WorkingFolder>CodePackage</WorkingFolder>
             <ConsoleRedirection FileRetentionCount="5" FileMaxSizeInKb="2048" />

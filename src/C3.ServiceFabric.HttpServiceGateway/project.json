@@ -16,9 +16,10 @@
   },
 
   "dependencies": {
-    "C3.ServiceFabric.HttpCommunication": "",
-    "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-rc2-20100",
-    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-20100"
+    "C3.ServiceFabric.HttpCommunication": "0.4.0-*",
+
+    "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-*"
   },
 
   "frameworks": {
