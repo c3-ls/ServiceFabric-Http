@@ -13,8 +13,7 @@
     "Microsoft.Extensions.Configuration.FileProviderExtensions": "1.0.0-rc2-20100",
     "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-20100",
     "Microsoft.Extensions.Logging": "1.0.0-rc2-20100",
-    "Microsoft.Extensions.Logging.Console": "1.0.0-rc2-20100",
-    "Microsoft.Extensions.Logging.Debug": "1.0.0-rc2-20100"
+    "Microsoft.Extensions.Logging.Console": "1.0.0-rc2-20100"
   },
 
   "commands": {
@@ -22,7 +21,7 @@
   },
 
   "frameworks": {
-    "dnx451": { }
+    "net451": { }
   },
 
   "exclude": [

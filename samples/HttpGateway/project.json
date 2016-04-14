@@ -19,7 +19,7 @@
   },
 
   "frameworks": {
-    "dnx451": { }
+    "net451": { }
   },
 
   "exclude": [

@@ -9,7 +9,7 @@ namespace C3.ServiceFabric.HttpCommunication
     /// Communication client that wraps the logic for talking to the service.
     /// Created by communication client factory.
     /// </summary>
-    public class HttpCommunicationClient : ICommunicationClient
+    public class HttpCommunicationClient : ICommunicationClient, IDisposable
     {
         public HttpClient HttpClient { get; }
 
@@ -17,6 +17,16 @@ namespace C3.ServiceFabric.HttpCommunication
         /// The resolved service partition which contains the resolved service endpoints.
         /// </summary>
         public ResolvedServicePartition ResolvedServicePartition { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the listener in the replica or instance to which the client is connected to.
+        /// </summary>
+        public string ListenerName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the service endpoint to which the client is connected to.
+        /// </summary>
+        public ResolvedServiceEndpoint Endpoint { get; set; }
 
         public HttpCommunicationClient(Uri baseAddress, TimeSpan operationTimeout)
         {
@@ -32,6 +42,11 @@ namespace C3.ServiceFabric.HttpCommunication
                 BaseAddress = baseAddress,
                 Timeout = operationTimeout
             };
+        }
+
+        public void Dispose()
+        {
+            HttpClient?.Dispose();
         }
     }
 }

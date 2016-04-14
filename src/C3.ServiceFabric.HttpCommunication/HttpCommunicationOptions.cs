@@ -1,6 +1,4 @@
-﻿using Microsoft.ServiceFabric.Services.Communication.Client;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace C3.ServiceFabric.HttpCommunication
 {
@@ -9,16 +7,6 @@ namespace C3.ServiceFabric.HttpCommunication
     /// </summary>
     public class HttpCommunicationOptions
     {
-        /// <summary>
-        /// Exception types which should not result in a retry operation.
-        /// </summary>
-        public Type[] DoNotRetryExceptionTypes { get; set; } = HttpCommunicationDefaults.DoNotRetryExceptionTypes;
-
-        /// <summary>
-        /// Defines custom ExceptionHandlers used to handle exceptions in the communication between client and service.
-        /// </summary>
-        public IList<IExceptionHandler> ExceptionHandlers { get; set; }
-
         /// <summary>
         /// Defines whether certain status codes from the response should be retried. (eg. 500)
         /// </summary>

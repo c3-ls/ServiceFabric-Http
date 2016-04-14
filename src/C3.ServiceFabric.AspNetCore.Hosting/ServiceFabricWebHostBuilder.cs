@@ -7,6 +7,10 @@ using System.Fabric;
 
 namespace C3.ServiceFabric.AspNetCore.Hosting
 {
+    /// <summary>
+    /// Provides a facade to the regular <see cref="WebHostBuilder"/> that allows 
+    /// to optionally register the application in the current Service Fabric cluster.
+    /// </summary>
     public class ServiceFabricWebHostBuilder : IWebHostBuilder, IDisposable
     {
         private readonly IWebHostBuilder _builder;

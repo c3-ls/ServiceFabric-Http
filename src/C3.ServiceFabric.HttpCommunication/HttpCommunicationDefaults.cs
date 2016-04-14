@@ -18,11 +18,6 @@ namespace C3.ServiceFabric.HttpCommunication
         public static TimeSpan OperationTimeout = TimeSpan.FromSeconds(12);
 
         /// <summary>
-        /// Exception types which should not result in a retry operation.
-        /// </summary>
-        public static Type[] DoNotRetryExceptionTypes = null;
-
-        /// <summary>
         /// Defines whether certain status codes from the response should be retried. (eg. 500)
         /// </summary>
         public static bool RetryHttpStatusCodeErrors = true;

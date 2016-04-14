@@ -12,7 +12,7 @@
 
   "dependencies": {
     "Microsoft.AspNetCore.Hosting": "1.0.0-rc2-20100",
-    "Microsoft.ServiceFabric.Services": "1.5.175-preview"
+    "Microsoft.ServiceFabric.Services": "2.0.135"
   },
 
   "frameworks": {

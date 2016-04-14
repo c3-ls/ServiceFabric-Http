@@ -1,12 +1,13 @@
-﻿using C3.ServiceFabric.HttpCommunication;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Microsoft.ServiceFabric.Services.Communication.Client;
-using System;
+﻿using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using C3.ServiceFabric.HttpCommunication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.ServiceFabric.Services.Communication.Client;
 
 namespace C3.ServiceFabric.HttpServiceGateway
 {
@@ -15,40 +16,35 @@ namespace C3.ServiceFabric.HttpServiceGateway
     /// </summary>
     public class HttpServiceGatewayMiddleware
     {
-        private readonly HttpServiceGatewayOptions _options;
         private readonly ILogger _logger;
         private readonly IHttpCommunicationClientFactory _httpCommunicationClientFactory;
+        private readonly HttpServiceGatewayOptions _gatewayOptions;
 
         public HttpServiceGatewayMiddleware(
             RequestDelegate next,
             ILoggerFactory loggerFactory,
-            HttpServiceGatewayOptions gatewayOptions,
-            IHttpCommunicationClientFactory httpCommunicationClientFactory)
+            IHttpCommunicationClientFactory httpCommunicationClientFactory,
+            IOptions<HttpServiceGatewayOptions> gatewayOptions)
         {
-            // TODO - RC2: change parameter to IOptions<HttpServiceGatewayOptions>
-
             if (next == null)
                 throw new ArgumentNullException(nameof(next));
 
             if (loggerFactory == null)
                 throw new ArgumentNullException(nameof(loggerFactory));
 
-            if (gatewayOptions == null)
-                throw new ArgumentNullException(nameof(gatewayOptions));
-
             if (httpCommunicationClientFactory == null)
                 throw new ArgumentNullException(nameof(httpCommunicationClientFactory));
-            
-            if (gatewayOptions.ServiceName == null)
-                throw new ArgumentNullException("options.ServiceFabricUri");
-            
-            if (gatewayOptions.NamedPartitionKeyResolver != null && gatewayOptions.Int64PartitionKeyResolver != null)
-                throw new ArgumentException("Only one PartitionKey-Resolver may be set.");
+
+            if (gatewayOptions?.Value == null)
+                throw new ArgumentNullException(nameof(gatewayOptions));
+
+            if (gatewayOptions.Value.ServiceName == null)
+                throw new ArgumentNullException($"{nameof(gatewayOptions)}.{nameof(gatewayOptions.Value.ServiceName)}");
 
             // "next" is not stored because this is a terminal middleware
             _logger = loggerFactory.CreateLogger(HttpServiceGatewayDefaults.LoggerName);
-            _options = gatewayOptions;
             _httpCommunicationClientFactory = httpCommunicationClientFactory;
+            _gatewayOptions = gatewayOptions.Value;
         }
 
         public async Task Invoke(HttpContext context)
@@ -107,8 +103,8 @@ namespace C3.ServiceFabric.HttpServiceGateway
             HttpResponseMessage response = await client.HttpClient.SendAsync(req, context.RequestAborted);
 
             // cases in which we want to invoke the retry logic from the ClientFactory
-            int statusCode = (int)response.StatusCode;
-            if ((statusCode >= 500 && statusCode < 600) || statusCode == (int)HttpStatusCode.NotFound)
+            int statusCode = (int) response.StatusCode;
+            if ((statusCode >= 500 && statusCode < 600) || statusCode == (int) HttpStatusCode.NotFound)
             {
                 throw new HttpResponseException("Service call failed", response);
             }
@@ -120,23 +116,11 @@ namespace C3.ServiceFabric.HttpServiceGateway
         {
             // these different calls are required because every constructor sets different variables internally.
 
-            ServicePartitionClient<HttpCommunicationClient> servicePartitionClient = null;
-
-            if (_options.NamedPartitionKeyResolver != null)
-            {
-                servicePartitionClient = new ServicePartitionClient<HttpCommunicationClient>(
-                    _httpCommunicationClientFactory, _options.ServiceName, _options.NamedPartitionKeyResolver(context));
-            }
-            else if (_options.Int64PartitionKeyResolver != null)
-            {
-                servicePartitionClient = new ServicePartitionClient<HttpCommunicationClient>(
-                    _httpCommunicationClientFactory, _options.ServiceName, _options.Int64PartitionKeyResolver(context));
-            }
-            else
-            {
-                servicePartitionClient = new ServicePartitionClient<HttpCommunicationClient>(
-                    _httpCommunicationClientFactory, _options.ServiceName);
-            }
+            var servicePartitionClient = new ServicePartitionClient<HttpCommunicationClient>(
+                communicationClientFactory: _httpCommunicationClientFactory,
+                serviceUri: _gatewayOptions.ServiceName,
+                partitionKey: _gatewayOptions.ServicePartitionKeyResolver?.Invoke(context),
+                listenerName: _gatewayOptions.ListenerName);
 
             return servicePartitionClient;
         }

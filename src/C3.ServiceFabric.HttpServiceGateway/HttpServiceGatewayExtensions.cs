@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System;
+using Microsoft.Extensions.Options;
 
 namespace C3.ServiceFabric.HttpServiceGateway
 {
@@ -78,8 +79,7 @@ namespace C3.ServiceFabric.HttpServiceGateway
             if (options == null)
                 throw new ArgumentNullException(nameof(options));
 
-            // TODO - RC2: change to Options.Create(options)
-            return app.UseMiddleware<HttpServiceGatewayMiddleware>(options);
+            return app.UseMiddleware<HttpServiceGatewayMiddleware>(Options.Create(options));
         }
     }
 }

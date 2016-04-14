@@ -1,8 +1,9 @@
-﻿using C3.ServiceFabric.HttpCommunication;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Client;
-using System;
+using Microsoft.ServiceFabric.Services.Communication.Client;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace C3.ServiceFabric.HttpCommunication
 {
     public static class HttpCommunicationServiceCollectionExtensions
     {
@@ -14,11 +15,8 @@ namespace Microsoft.Extensions.DependencyInjection
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
 
-            // in case they haven't been added yet.
-            // TODO this can be removed in RC2: https://github.com/aspnet/Hosting/issues/547
-            services.AddOptions();
-
             services.AddTransient(x => ServicePartitionResolver.GetDefault());
+            services.AddTransient<IExceptionHandler, HttpCommunicationExceptionHandler>();
             services.AddSingleton<IHttpCommunicationClientFactory, HttpCommunicationClientFactory>();
 
             return services;

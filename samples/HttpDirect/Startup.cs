@@ -46,7 +46,7 @@ namespace HttpDirect
             services.Configure<HttpCommunicationOptions>(Configuration.GetSection("HttpCommunication"));
             services.AddServiceFabricHttpCommunication(options =>
             {
-                options.DoNotRetryExceptionTypes = new[] { typeof(NotSupportedException) };
+                options.RetryHttpStatusCodeErrors = true;
             });
         }
 

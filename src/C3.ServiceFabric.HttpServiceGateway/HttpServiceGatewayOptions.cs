@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
+using Microsoft.AspNetCore.Http;
+using Microsoft.ServiceFabric.Services.Client;
 
 namespace C3.ServiceFabric.HttpServiceGateway
 {
@@ -14,13 +15,13 @@ namespace C3.ServiceFabric.HttpServiceGateway
         public Uri ServiceName { get; set; }
 
         /// <summary>
-        /// Delegate for resolving Int64 partitioned services.
+        /// Name of the listener in the replica or instance to which the client should connect.
         /// </summary>
-        public Func<HttpContext, long> Int64PartitionKeyResolver { get; set; }
+        public string ListenerName { get; set; }
 
         /// <summary>
-        /// Delegate for resolving string partitioned services.
+        /// Delegate for resolving the partition key for partitioned services.
         /// </summary>
-        public Func<HttpContext, string> NamedPartitionKeyResolver { get; set; }
+        public Func<HttpContext, ServicePartitionKey> ServicePartitionKeyResolver { get; set; }
     }
 }
