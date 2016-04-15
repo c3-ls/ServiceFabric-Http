@@ -26,7 +26,7 @@ namespace HttpDirect
             // create the Service Fabric client (it will resolve the address)
             var client = new ServicePartitionClient<HttpCommunicationClient>(
                 _clientFactory,
-                new Uri("fabric:/GatewaySample/HttpServiceService"));
+                new Uri("fabric:/GatewaySample/HttpService"));
 
             // call your service.
             await client.InvokeWithRetry(async x =>

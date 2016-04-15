@@ -58,17 +58,17 @@ namespace HttpGateway
         {
             // this would forward every request to the service. this way, your application can only handle one service.
 
-            //app.RunHttpServiceGateway("fabric:/GatewaySample/HttpServiceService");
+            //app.RunHttpServiceGateway("fabric:/GatewaySample/HttpService");
 
             // ... this only forwards requests on a certain path. This is the simplest case for non-partitioned services.
 
-            app.RunHttpServiceGateway("/service1", "fabric:/GatewaySample/HttpServiceService");
+            app.RunHttpServiceGateway("/service1", "fabric:/GatewaySample/HttpService");
 
             // ... pass an instance of HttpServiceGatewayOptions for more options (e.g. to define the PartitionKeyResolver)
 
             //app.RunHttpServiceGateway("/service", new HttpServiceGatewayOptions
             //{
-            //    ServiceName = new Uri("fabric:/GatewaySample/HttpServiceService")
+            //    ServiceName = new Uri("fabric:/GatewaySample/HttpService")
             //});
 
             // ... if you need to do multiple things within the path branch, you can use app.Map():
@@ -77,7 +77,7 @@ namespace HttpGateway
             //{
             //    appBuilder.RunHttpServiceGateway(new HttpServiceGatewayOptions
             //    {
-            //        ServiceName = new Uri("fabric:/GatewaySample/HttpServiceService")
+            //        ServiceName = new Uri("fabric:/GatewaySample/HttpService")
             //    });
             //});
         }

@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="GatewaySampleType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
    <Parameters>
-      <Parameter Name="HttpServiceService_InstanceCount" DefaultValue="2" />
-      <Parameter Name="HttpGatewayService_InstanceCount" DefaultValue="1" />
+      <Parameter Name="HttpService_InstanceCount" DefaultValue="2" />
+      <Parameter Name="HttpGateway_InstanceCount" DefaultValue="1" />
    </Parameters>
    <ServiceManifestImport>
       <ServiceManifestRef ServiceManifestName="HttpService" ServiceManifestVersion="1.0.0" />
@@ -11,13 +11,13 @@
       <ServiceManifestRef ServiceManifestName="HttpGateway" ServiceManifestVersion="1.0.0" />
    </ServiceManifestImport>
    <DefaultServices>
-      <Service Name="HttpServiceService">
-         <StatelessService ServiceTypeName="HttpServiceType" InstanceCount="[HttpServiceService_InstanceCount]">
+      <Service Name="HttpService">
+         <StatelessService ServiceTypeName="HttpServiceType" InstanceCount="[HttpService_InstanceCount]">
             <SingletonPartition />
          </StatelessService>
       </Service>
-      <Service Name="HttpGatewayService">
-         <StatelessService ServiceTypeName="HttpGatewayType" InstanceCount="[HttpGatewayService_InstanceCount]">
+      <Service Name="HttpGateway">
+         <StatelessService ServiceTypeName="HttpGatewayType" InstanceCount="[HttpGateway_InstanceCount]">
             <SingletonPartition />
          </StatelessService>
       </Service>
