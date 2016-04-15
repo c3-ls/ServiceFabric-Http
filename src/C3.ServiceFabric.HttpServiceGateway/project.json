@@ -18,8 +18,8 @@
   "dependencies": {
     "C3.ServiceFabric.HttpCommunication": "0.4.0-*",
 
-    "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-rc2-*",
-    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-*"
+    "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-*",
+    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-*"
   },
 
   "frameworks": {
