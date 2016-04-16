@@ -17,7 +17,10 @@ Properties {
         "src/C3.ServiceFabric.AspNetCore.Hosting", `
         "src/C3.ServiceFabric.HttpCommunication", `
         "src/C3.ServiceFabric.HttpServiceGateway" )
-    
+
+    # the artifacts-subfolder in which all NuGet packages are stored
+    $NugetArtifactsFolder = "nuget"
+
     # A list of "Service Fabric" applications for which a deployment package should be created
     $ServiceFabricApps = @( "GatewaySample" )
     
@@ -98,7 +101,7 @@ Task packageNuget {
     $NugetLibraries | ForEach-Object {
             
         $library = $_
-        $libraryOutput = Join-Path $ArtifactsPath $library
+        $libraryOutput = Join-Path $ArtifactsPath $NugetArtifactsFolder
     
         Write-Host "Packaging $library to $libraryOutput"
 
