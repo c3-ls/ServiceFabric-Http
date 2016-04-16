@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.ServiceFabric.Services.Client;
 using Microsoft.ServiceFabric.Services.Communication.Client;
@@ -9,46 +10,59 @@ using Microsoft.ServiceFabric.Services.Communication.Client;
 namespace C3.ServiceFabric.HttpCommunication
 {
     /// <summary>
-    /// Factory that creates clients that know to communicate with the service.
+    /// Factory that creates clients that know how to communicate with the service.
     /// Contains a service partition resolver that resolves a partition key
     /// and sets BaseAddress to the address of the replica that should serve a request.
     /// </summary>
     public class HttpCommunicationClientFactory : CommunicationClientFactoryBase<HttpCommunicationClient>, IHttpCommunicationClientFactory
     {
         private readonly HttpCommunicationOptions _options;
+        private readonly ILogger _logger;
 
         public HttpCommunicationClientFactory(
             ServicePartitionResolver resolver,
             IEnumerable<IExceptionHandler> exceptionHandlers,
-            IOptions<HttpCommunicationOptions> options)
+            IOptions<HttpCommunicationOptions> options,
+            ILoggerFactory loggerFactory)
             : base(resolver, exceptionHandlers)
         {
             if (options == null)
                 throw new ArgumentNullException(nameof(options));
 
+            if (loggerFactory == null)
+                throw new ArgumentNullException(nameof(loggerFactory));
+
             _options = options.Value;
+            _logger = loggerFactory.CreateLogger(HttpCommunicationDefaults.LoggerName);
         }
 
         protected override Task<HttpCommunicationClient> CreateClientAsync(string endpoint, CancellationToken cancellationToken)
         {
-            // Create a communication client. This doesn't establish a session with the server.
+            _logger.CreateClient(endpoint);
+
             Uri endpointUri = CreateEndpointUri(endpoint);
             return Task.FromResult(new HttpCommunicationClient(endpointUri, _options.OperationTimeout));
         }
 
         protected override void AbortClient(HttpCommunicationClient client)
         {
+            _logger.AbortClient(client);
+
             client?.Dispose();
         }
 
         protected override bool ValidateClient(HttpCommunicationClient client)
         {
+            _logger.ValidateClient(client);
+
             // Http communication doesn't maintain a communication channel, so nothing to validate.
-            return client != null;
+            return true;
         }
 
         protected override bool ValidateClient(string endpoint, HttpCommunicationClient client)
         {
+            _logger.ValidateClient(client, endpoint);
+
             Uri endpointUri = CreateEndpointUri(endpoint);
             bool equals = client != null && client.HttpClient.BaseAddress == endpointUri;
             return equals;

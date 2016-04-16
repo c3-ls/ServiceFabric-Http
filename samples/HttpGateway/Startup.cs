@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Net;
+using Microsoft.Extensions.Logging.Console;
 
 namespace HttpGateway
 {
@@ -17,7 +18,14 @@ namespace HttpGateway
 
         public Startup(ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(LogLevel.Debug);
+            loggerFactory.AddConsole(new ConsoleLoggerSettings
+            {
+                Switches =
+                {
+                    ["Default"] = LogLevel.Debug,
+                    ["Microsoft"] = LogLevel.Information
+                }
+            });
 
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")

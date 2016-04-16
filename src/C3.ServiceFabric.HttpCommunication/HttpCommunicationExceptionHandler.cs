@@ -10,7 +10,7 @@ using Microsoft.ServiceFabric.Services.Communication.Client;
 namespace C3.ServiceFabric.HttpCommunication
 {
     /// <summary>
-    /// Provides default exception handling for the HTTP communication.
+    /// Provides default exception- & retry-handling for the HTTP communication.
     /// </summary>
     public class HttpCommunicationExceptionHandler : IExceptionHandler
     {
@@ -40,13 +40,15 @@ namespace C3.ServiceFabric.HttpCommunication
 
             if (ex is TaskCanceledException || ex is TimeoutException)
             {
-                _logger.LogWarning("Retrying Service call. Reason: {Reason}", ex.GetType().Name);
+                _logger.RetryingServiceCall(ex.GetType().Name);
+
                 return CreateExceptionHandlingRetryResult(false, ex, out result);
             }
 
             if (ex is ProtocolViolationException)
             {
-                _logger.LogWarning("Retrying Service call. Reason: {Reason}, Details: {Details}", "ProtocolViolationException", ex);
+                _logger.RetryingServiceCall("ProtocolViolationException", null, ex);
+
                 return CreateExceptionHandlingRetryResult(false, ex, out result);
             }
 
@@ -58,7 +60,8 @@ namespace C3.ServiceFabric.HttpCommunication
                     webEx.Status == WebExceptionStatus.ConnectionClosed ||
                     webEx.Status == WebExceptionStatus.ConnectFailure)
                 {
-                    _logger.LogWarning("Retrying Service call. Reason: {Reason}, Details: {Details}", "WebExceptionStatus " + webEx.Status, ex);
+                    _logger.RetryingServiceCall("WebExceptionStatus " + webEx.Status, null, ex);
+
                     return CreateExceptionHandlingRetryResult(false, webEx, out result);
                 }
             }
@@ -90,7 +93,8 @@ namespace C3.ServiceFabric.HttpCommunication
                         // This could either mean we requested an endpoint that does not exist in the service API (a user error)
                         // or the address that was resolved by fabric client is stale (transient runtime error) in which we should re-resolve.
 
-                        _logger.LogWarning("Retrying Service call. Reason: {Reason}", "HTTP 404");
+                        _logger.RetryingServiceCall("HTTP 404");
+
                         result = new ExceptionHandlingRetryResult(
                             exceptionId: "HTTP 404",
                             isTransient: false,
@@ -123,13 +127,15 @@ namespace C3.ServiceFabric.HttpCommunication
                             errorResponse = Task.Run(() => responseMessage.Content.ReadAsStringAsync()).Result;
                         }
 
-                        _logger.LogWarning("Retrying Service call. Reason: {Reason}, Details: {Details}", "HTTP " + (int)httpStatusCode, errorResponse);
+                        _logger.RetryingServiceCall($"HTTP {(int) httpStatusCode}", errorResponse);
+
                         return CreateExceptionHandlingRetryResult(true, ex, out result);
                     }
                 }
             }
 
-            _logger.LogError($"Service call failed. ({ex.Message})", ex);
+            _logger.ServiceCallFailed(ex);
+
             result = null;
             return false;
         }
