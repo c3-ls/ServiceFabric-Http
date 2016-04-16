@@ -5,7 +5,7 @@
   },
 
   "dependencies": {
-    "C3.ServiceFabric.AspNetCore.Hosting": "0.4.0-*",
+    "C3.ServiceFabric.AspNetCore.StatelessHost": "0.4.0-*",
     "C3.ServiceFabric.HttpServiceGateway": "0.4.0-*",
 
     "Microsoft.AspNetCore.Diagnostics": "1.0.0-*",

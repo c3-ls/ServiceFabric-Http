@@ -14,7 +14,7 @@ Properties {
 
     # A list of projects for which NuGet packages should be created
     $NugetLibraries = @( `
-        "src/C3.ServiceFabric.AspNetCore.Hosting", `
+        "src/C3.ServiceFabric.AspNetCore.StatelessHost", `
         "src/C3.ServiceFabric.HttpCommunication", `
         "src/C3.ServiceFabric.HttpServiceGateway" )
 

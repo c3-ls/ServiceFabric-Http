@@ -6,7 +6,7 @@ using System;
 using System.Fabric;
 using Microsoft.Extensions.Logging;
 
-namespace C3.ServiceFabric.AspNetCore.Hosting
+namespace C3.ServiceFabric.AspNetCore.StatelessHost
 {
     /// <summary>
     /// Provides a facade to the regular <see cref="WebHostBuilder"/> that allows 

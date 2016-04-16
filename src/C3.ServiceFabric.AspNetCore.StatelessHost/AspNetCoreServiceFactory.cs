@@ -2,7 +2,7 @@
 using System;
 using System.Fabric;
 
-namespace C3.ServiceFabric.AspNetCore.Hosting
+namespace C3.ServiceFabric.AspNetCore.StatelessHost
 {
     public class AspNetCoreServiceFactory : IStatelessServiceFactory
     {

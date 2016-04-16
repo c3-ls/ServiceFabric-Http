@@ -1,4 +1,4 @@
-﻿using C3.ServiceFabric.AspNetCore.Hosting;
+﻿using C3.ServiceFabric.AspNetCore.StatelessHost;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

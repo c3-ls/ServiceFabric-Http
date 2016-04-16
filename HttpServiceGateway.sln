@@ -25,7 +25,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "C3.ServiceFabric.HttpCommun
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "HttpDirect", "samples\HttpDirect\HttpDirect.xproj", "{00DF961B-79A6-41D8-A494-AED4E50204FF}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "C3.ServiceFabric.AspNetCore.Hosting", "src\C3.ServiceFabric.AspNetCore.Hosting\C3.ServiceFabric.AspNetCore.Hosting.xproj", "{F122EAAA-BD65-4A99-8509-363936D78501}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "C3.ServiceFabric.AspNetCore.StatelessHost", "src\C3.ServiceFabric.AspNetCore.StatelessHost\C3.ServiceFabric.AspNetCore.StatelessHost.xproj", "{F122EAAA-BD65-4A99-8509-363936D78501}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

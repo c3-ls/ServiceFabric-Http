@@ -6,7 +6,7 @@ using System.Fabric;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace C3.ServiceFabric.AspNetCore.Hosting
+namespace C3.ServiceFabric.AspNetCore.StatelessHost
 {
     public class AspNetCoreService : IStatelessServiceInstance
     {
