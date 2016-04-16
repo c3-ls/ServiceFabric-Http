@@ -5,32 +5,22 @@ init:
   - git config --global core.autocrlf true
 
 install:
-  - ps: "&{$Branch='dev';iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}"
-  - ps: dnvm install 1.0.0-rc2-20221 -r clr -a x86 -u
-  - ps: dnvm install 1.0.0-rc2-20221 -r clr -a x64 -u -p
-  - ps: dnvm list
-  
   # update project.json versions for continuous delivery to MyGet
   - ps: .\build-set-version.ps1
 
-nuget:
-  disable_publish_on_pr: true
-
-## do we need this? platform: x64
-
-configuration: Release
-
-before_build:
-  - ps: dnu restore
+build_script:
+  - ps: if ($env:APPVEYOR_REPO_TAG -eq $true) { $BuildNumber = "" } else { $BuildNumber = $env:APPVEYOR_BUILD_NUMBER }
+  - ps: Import-Module .\tools\psake\psake.psm1
+  - ps: Invoke-psake .\build-definition.ps1 -properties @{ "BuildNumber"=$BuildNumber }
 
 artifacts:
-  - path: src\artifacts\bin\**\$(configuration)\*.nupkg
+  - path: artifacts\src\**\*.nupkg
     name: NugetPackage
 
 deploy:
   # publish all changes on master to MyGet
-  - provider: Environment
-    name: MyGet C3-OSS
+#  - provider: Environment
+#    name: MyGet C3-OSS
   
   # new release tag -> create GitHub release
   - provider: GitHub

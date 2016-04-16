@@ -27,7 +27,7 @@ Properties {
 
 FormatTaskName ("`n" + ("-"*25) + "[{0}]" + ("-"*25) + "`n")
 
-Task Default -depends init, clean, dotnetRestore, dotnetBuild, dotnetTest, packageNuget, packageServiceFabric
+Task Default -depends init, clean, dotnetInstall, dotnetRestore, dotnetBuild, dotnetTest, packageNuget, packageServiceFabric
 
 Task init {
 
@@ -46,6 +46,23 @@ Task clean {
     New-Item $ArtifactsPath -ItemType Directory -ErrorAction Ignore | Out-Null
 
     Write-Host "Created artifacts folder '$ArtifactsPath'"
+}
+
+Task dotnetInstall {
+    
+    if (Get-Command "dotnet.exe" -ErrorAction SilentlyContinue) {
+        Write-Host "dotnet SDK already installed"
+        exec { dotnet --version }
+    } else {
+        Write-Host "Installing dotnet SDK"
+        
+        $installScript = Join-Path $ArtifactsPath "dotnet-install.ps1"
+        
+        Invoke-WebRequest "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1" `
+            -OutFile $installScript
+            
+        & $installScript
+    }
 }
 
 Task dotnetRestore {
