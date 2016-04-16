@@ -2,8 +2,8 @@
   "version": "0.4.0-rc2-*",
   "description": "ASP.NET Core library for communication with HTTP-based \"Azure Service Fabric\" services",
   "authors": [ "C3 Loyalty Services" ],
-  "projectUrl": "https://github.com/c3-ls/ServiceFabric-HttpServiceGateway",
-  "licenseUrl": "https://github.com/c3-ls/ServiceFabric-HttpServiceGateway/blob/master/LICENSE",
+  "projectUrl": "https://github.com/c3-ls/ServiceFabric-Http",
+  "licenseUrl": "https://github.com/c3-ls/ServiceFabric-Http/blob/master/LICENSE",
   "tags": ["ServiceFabric", "ReliableServices", "HttpClient", "Retry", "AspNetCore"],
   
   "compilationOptions": {
@@ -12,7 +12,7 @@
 
   "repository": {
     "type": "git",
-    "url": "git://github.com/c3-ls/ServiceFabric-HttpServiceGateway"
+    "url": "git://github.com/c3-ls/ServiceFabric-Http"
   },
 
   "dependencies": {

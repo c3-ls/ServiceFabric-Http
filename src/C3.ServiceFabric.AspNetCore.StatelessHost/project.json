@@ -2,12 +2,17 @@
   "version": "0.4.0-rc2-*",
   "description": "Hosting library for stateless ASP.NET Core-based Service Fabric services. With this library, it's not required to publish the app to your local Service Fabric cluster whenever you want to start/debug it locally. Instead, you can just 'dotnet run' or 'dotnet watch' your app! This is a huge time saver during development.",
   "authors": [ "C3 Loyalty Services" ],
-  "projectUrl": "https://github.com/c3-ls/ServiceFabric-HttpServiceGateway",
-  "licenseUrl": "https://github.com/c3-ls/ServiceFabric-HttpServiceGateway/blob/master/LICENSE",
+  "projectUrl": "https://github.com/c3-ls/ServiceFabric-Http",
+  "licenseUrl": "https://github.com/c3-ls/ServiceFabric-Http/blob/master/LICENSE",
   "tags": [ "ServiceFabric", "ReliableServices", "Hosting", "AspNetCore" ],
 
   "compilationOptions": {
     "warningsAsErrors": true
+  },
+
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/c3-ls/ServiceFabric-Http"
   },
 
   "dependencies": {
