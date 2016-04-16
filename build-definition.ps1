@@ -79,7 +79,7 @@ Task dotnetRestore {
 
 Task dotnetBuild {
 
-    Get-ChildItem -Filter project.json -Recurse -Depth 3 | ForEach-Object {
+    Get-ChildItem -Filter project.json -Recurse | ForEach-Object {
         exec { dotnet build $_.Directory -c $BuildConfiguration --version-suffix $BuildNumber }
     }
 }
