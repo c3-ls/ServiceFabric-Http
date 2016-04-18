@@ -16,7 +16,7 @@
   },
 
   "dependencies": {
-    "Microsoft.AspNetCore.Hosting": "1.0.0-*",
+    "Microsoft.AspNetCore.Hosting": "1.0.0-rc2-*",
     "Microsoft.ServiceFabric.Services": "2.0.135"
   },
 

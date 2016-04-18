@@ -5,7 +5,7 @@ using Microsoft.ServiceFabric.Services.Client;
 namespace C3.ServiceFabric.HttpServiceGateway
 {
     /// <summary>
-    /// Options for the HttpServiceGateway middleware.
+    /// Options for a single gateway instance.
     /// </summary>
     public class HttpServiceGatewayOptions
     {

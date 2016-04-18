@@ -16,8 +16,8 @@
   },
 
   "dependencies": {
-    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-*",
-    "Microsoft.Extensions.Options": "1.0.0-*",
+    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Options": "1.0.0-rc2-*",
     "Microsoft.ServiceFabric.Services": "2.0.135"
   },
 
