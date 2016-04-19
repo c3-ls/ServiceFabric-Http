@@ -21,6 +21,7 @@
     "C3.ServiceFabric.HttpCommunication": "1.0.0-*",
 
     "Microsoft.AspNetCore.Http.Abstractions": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Configuration.Binder": "1.0.0-rc2-final",
     "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-final"
   },
 
