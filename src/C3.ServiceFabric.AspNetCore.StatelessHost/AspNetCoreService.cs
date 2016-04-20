@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Server.Features;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.PlatformAbstractions;
 using System;
 using System.Fabric;

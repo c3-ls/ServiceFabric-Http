@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Fabric;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace C3.ServiceFabric.AspNetCore.StatelessHost
@@ -54,12 +53,6 @@ namespace C3.ServiceFabric.AspNetCore.StatelessHost
             return new ServiceFabricWebHost(_builder.Build(), _fabricRuntime);
         }
 
-        public IWebHostBuilder Configure(Action<IApplicationBuilder> configureApplication)
-        {
-            _builder.Configure(configureApplication);
-            return this;
-        }
-
         public IWebHostBuilder ConfigureServices(Action<IServiceCollection> configureServices)
         {
             _builder.ConfigureServices(configureServices);
@@ -76,21 +69,9 @@ namespace C3.ServiceFabric.AspNetCore.StatelessHost
             return _builder.GetSetting(key);
         }
 
-        public IWebHostBuilder UseServer(IServerFactory factory)
-        {
-            _builder.UseServer(factory);
-            return this;
-        }
-
         public IWebHostBuilder UseSetting(string key, string value)
         {
             _builder.UseSetting(key, value);
-            return this;
-        }
-
-        public IWebHostBuilder UseStartup(Type startupType)
-        {
-            _builder.UseStartup(startupType);
             return this;
         }
 
@@ -104,6 +85,18 @@ namespace C3.ServiceFabric.AspNetCore.StatelessHost
         {
             _builder.ConfigureLogging(configureLogging);
             return this;
+        }
+
+        public IWebHostBuilder UseStartup(Type startupType)
+        {
+            // TODO @cweiss Remove in RC2 ( https://github.com/aspnet/Hosting/commit/8f5f8d28d00468725d9fd8dd95123f43d22f2c3c )
+            return _builder.UseStartup(startupType);
+        }
+
+        public IWebHostBuilder Configure(Action<IApplicationBuilder> configureApplication)
+        {
+            // TODO @cweiss Remove in RC2 ( https://github.com/aspnet/Hosting/commit/8f5f8d28d00468725d9fd8dd95123f43d22f2c3c )
+            return _builder.Configure(configureApplication);
         }
     }
 }
