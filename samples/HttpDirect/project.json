@@ -1,7 +1,12 @@
 ﻿{
   "version": "1.0.0-*",
-  "compilationOptions": {
+
+  "buildOptions": {
     "emitEntryPoint": true
+  },
+
+  "publishOptions": {
+    "include": [ "appsettings.json" ]
   },
 
   "dependencies": {
@@ -9,6 +14,7 @@
 
     "Microsoft.AspNetCore.Diagnostics": "1.0.0-rc2-*",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-*",
     "Microsoft.Extensions.Logging.Console": "1.0.0-rc2-*",
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0-rc2-*"
   },
@@ -19,9 +25,5 @@
 
   "frameworks": {
     "net451": { }
-  },
-
-  "content": [
-    "appsettings.json"
-  ]
+  }
 }

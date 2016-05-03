@@ -1,7 +1,12 @@
 {
   "version": "1.0.0-*",
-  "compilationOptions": {
+
+  "buildOptions": {
     "emitEntryPoint": true
+  },
+
+  "publishOptions": {
+    "include": [ "appsettings.json" ]
   },
 
   "dependencies": {
@@ -26,9 +31,5 @@
         "System.Runtime": ""
       }
     }
-  },
-
-  "content": [
-    "appsettings.json"
-  ]
+  }
 }

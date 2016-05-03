@@ -2,6 +2,7 @@
 using System.Fabric;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -22,8 +23,12 @@ namespace C3.ServiceFabric.AspNetCore.StatelessHost
         {
             Console.WriteLine("ServiceFabricWebHostBuilder: Constructor");
 
+            var config = new ConfigurationBuilder()
+                .AddCommandLine(args)
+                .Build();
+
             _builder = new WebHostBuilder()
-                .UseDefaultHostingConfiguration(args);
+                .UseConfiguration(config);
 
             RunInServiceFabric = string.Equals(_builder.GetSetting("fabric"), "true", StringComparison.OrdinalIgnoreCase);
 

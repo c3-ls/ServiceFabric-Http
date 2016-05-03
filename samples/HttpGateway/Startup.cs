@@ -28,8 +28,7 @@ namespace HttpGateway
             });
 
             var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .AddEnvironmentVariables();
+                .AddJsonFile("appsettings.json");
 
             Configuration = builder.Build();
         }
