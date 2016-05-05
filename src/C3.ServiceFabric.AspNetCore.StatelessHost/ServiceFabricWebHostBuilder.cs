@@ -95,13 +95,15 @@ namespace C3.ServiceFabric.AspNetCore.StatelessHost
         public IWebHostBuilder UseStartup(Type startupType)
         {
             // TODO @cweiss Remove in RC2 ( https://github.com/aspnet/Hosting/commit/8f5f8d28d00468725d9fd8dd95123f43d22f2c3c )
-            return _builder.UseStartup(startupType);
+            _builder.UseStartup(startupType);
+            return this;
         }
 
         public IWebHostBuilder Configure(Action<IApplicationBuilder> configureApplication)
         {
             // TODO @cweiss Remove in RC2 ( https://github.com/aspnet/Hosting/commit/8f5f8d28d00468725d9fd8dd95123f43d22f2c3c )
-            return _builder.Configure(configureApplication);
+            _builder.Configure(configureApplication);
+            return this;
         }
     }
 }
