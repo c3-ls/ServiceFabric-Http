@@ -14,7 +14,7 @@ namespace C3.ServiceFabric.AspNetCore.StatelessHost
             if (webHostBuilder == null)
                 throw new ArgumentNullException(nameof(webHostBuilder));
 
-            IApplicationEnvironment application = PlatformServices.Default.Application;
+            var application = PlatformServices.Default.Application;
             string serviceTypeName = AspNetCoreService.GetServiceTypeName(application);
 
             Console.WriteLine("UseServiceFabric - ServiceTypeName: " + serviceTypeName);

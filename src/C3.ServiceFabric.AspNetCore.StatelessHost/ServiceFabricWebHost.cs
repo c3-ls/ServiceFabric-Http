@@ -33,7 +33,7 @@ namespace C3.ServiceFabric.AspNetCore.StatelessHost
         {
             Console.WriteLine("ServiceFabricWebHost: Start");
 
-            IApplicationEnvironment appEnv = PlatformServices.Default.Application;
+            var appEnv = PlatformServices.Default.Application;
 
             string serviceTypeName = AspNetCoreService.GetServiceTypeName(appEnv);
 

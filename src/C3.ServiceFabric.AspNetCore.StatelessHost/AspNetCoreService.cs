@@ -60,7 +60,7 @@ namespace C3.ServiceFabric.AspNetCore.StatelessHost
             Stop();
         }
 
-        public static string GetServiceTypeName(IApplicationEnvironment appEnv)
+        public static string GetServiceTypeName(ApplicationEnvironment appEnv)
         {
             return string.Format("{0}Type", appEnv.ApplicationName);
         }
