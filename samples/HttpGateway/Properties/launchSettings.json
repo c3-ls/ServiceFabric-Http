@@ -3,10 +3,8 @@
     "web": {
       "commandName": "web",
       "environmentVariables": {
-        "Hosting:Environment": "Development",
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "sdkVersion": "dnx-clr-win-x64.1.0.0-rc2-20221"
+      }
     }
   }
 }

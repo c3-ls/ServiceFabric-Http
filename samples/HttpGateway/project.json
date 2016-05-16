@@ -10,18 +10,14 @@
   },
 
   "dependencies": {
-    "C3.ServiceFabric.AspNetCore.StatelessHost": "0.4.0-*",
-    "C3.ServiceFabric.HttpServiceGateway": "0.4.0-*",
+    "C3.ServiceFabric.AspNetCore.StatelessHost": "1.0.0-*",
+    "C3.ServiceFabric.HttpServiceGateway": "1.0.0-*",
 
-    "Microsoft.AspNetCore.Diagnostics": "1.0.0-rc2-*",
-    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-*",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-*",
-    "Microsoft.Extensions.Logging.Console": "1.0.0-rc2-*",
-    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0-rc2-*"
-  },
-
-  "commands": {
-    "web": "HttpGateway"
+    "Microsoft.AspNetCore.Diagnostics": "1.0.0-rc2-final",
+    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Logging.Console": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0-rc2-final"
   },
 
   "frameworks": {
