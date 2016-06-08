@@ -1,4 +1,5 @@
-﻿using C3.ServiceFabric.HttpCommunication;
+﻿using System.IO;
+using C3.ServiceFabric.HttpCommunication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -12,11 +13,12 @@ namespace HttpDirect
     {
         public IConfigurationRoot Configuration { get; set; }
 
-        public Startup(ILoggerFactory loggerFactory)
+        public Startup(ILoggerFactory loggerFactory, IHostingEnvironment env)
         {
             loggerFactory.AddConsole(LogLevel.Debug);
 
             var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false);
 
             Configuration = builder.Build();
@@ -68,6 +70,7 @@ namespace HttpDirect
         {
             var builder = new WebHostBuilder()
                 .UseKestrel()
+                .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<Startup>()
                 .Build();
 

@@ -1,4 +1,5 @@
-﻿using C3.ServiceFabric.AspNetCore.StatelessHost;
+﻿using System.IO;
+using C3.ServiceFabric.AspNetCore.StatelessHost;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +13,7 @@ namespace HttpService
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json");
 
             Configuration = builder.Build();
@@ -39,6 +41,7 @@ namespace HttpService
             {
                 builder
                     .UseKestrel()
+                    .UseContentRoot(Directory.GetCurrentDirectory())
                     .UseStartup<Startup>()
                     .Build()
                     .Run();

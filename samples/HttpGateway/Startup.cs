@@ -1,4 +1,6 @@
-﻿using C3.ServiceFabric.AspNetCore.StatelessHost;
+﻿using System.IO;
+using System.Net;
+using C3.ServiceFabric.AspNetCore.StatelessHost;
 using C3.ServiceFabric.HttpCommunication;
 using C3.ServiceFabric.HttpServiceGateway;
 using Microsoft.AspNetCore.Builder;
@@ -7,7 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Net;
 using Microsoft.Extensions.Logging.Console;
 
 namespace HttpGateway
@@ -16,7 +17,7 @@ namespace HttpGateway
     {
         public IConfigurationRoot Configuration { get; set; }
 
-        public Startup(ILoggerFactory loggerFactory)
+        public Startup(ILoggerFactory loggerFactory, IHostingEnvironment env)
         {
             loggerFactory.AddConsole(new ConsoleLoggerSettings
             {
@@ -28,6 +29,7 @@ namespace HttpGateway
             });
 
             var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json");
 
             Configuration = builder.Build();
@@ -95,6 +97,7 @@ namespace HttpGateway
             {
                 builder
                      .UseKestrel()
+                     .UseContentRoot(Directory.GetCurrentDirectory())
                      .UseStartup<Startup>()
                      .Build()
                      .Run();
