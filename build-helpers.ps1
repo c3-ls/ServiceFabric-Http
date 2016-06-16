@@ -78,7 +78,7 @@ function PublishSfApp($sfBasePath, $sfApp, $outputPath, $buildConfiguration, $bu
             New-Item $codeOutput -ItemType Directory | Out-Null
         }
             
-        exec { dotnet publish $servicePath -c $buildConfiguration --version-suffix $buildNumber -o $codeOutput }
+        exec { dotnet publish $servicePath -c $buildConfiguration --version-suffix $buildNumber --no-build -o $codeOutput }
                         
         Copy-Item (Join-Path $servicePath "PackageRoot/*") $serviceOutput -Recurse -Force
     }

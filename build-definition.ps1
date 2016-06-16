@@ -69,22 +69,13 @@ Task dotnetInstall {
 }
 
 Task dotnetRestore {
-    
-    $globalJson = Get-Content -Path global.json -Raw -ErrorAction Ignore | ConvertFrom-Json -ErrorAction Ignore
-    if($globalJson)
-    {
-        Write-Host "Restoring all referenced folders from global.json"
-        $globalJson.projects | ForEach-Object { 
-            exec { dotnet restore $_ -v Minimal }
-        }
-    }
+
+    exec { dotnet restore -v Minimal }
 }
 
 Task dotnetBuild {
 
-    Get-ChildItem -Filter project.json -Recurse | ForEach-Object {
-        exec { dotnet build $_.Directory -c $BuildConfiguration --version-suffix $BuildNumber }
-    }
+    exec { dotnet build **\project.json -c $BuildConfiguration --version-suffix $BuildNumber }
 }
 
 Task dotnetTest {
@@ -105,7 +96,7 @@ Task packageNuget {
     
         Write-Host "Packaging $library to $libraryOutput"
 
-        exec { dotnet pack $library -c $BuildConfiguration --version-suffix $BuildNumber -o $libraryOutput }
+        exec { dotnet pack $library -c $BuildConfiguration --version-suffix $BuildNumber --no-build -o $libraryOutput }
     }
 }
 
