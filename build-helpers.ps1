@@ -50,8 +50,10 @@ function PublishSfApp($sfBasePath, $sfApp, $outputPath, $buildConfiguration, $bu
     # it copies all services, application files and scripts into an artifacts folder.
     
     $sfAppPath = Join-Path $sfBasePath $sfApp
-    
+
+    Write-Host ""
     Write-Host "Publishing Service Fabric-App '$sfAppPath' to $outputPath"
+    Write-Host ""
 
     $sfServices = GetServicesFromSfApp $sfAppPath
     
