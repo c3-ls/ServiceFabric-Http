@@ -1,5 +1,5 @@
 ﻿{
-  "version": "1.0.0-rc2-*",
+  "version": "1.0.0-rtm-*",
 
   "buildOptions": {
     "warningsAsErrors": true
@@ -18,8 +18,8 @@
   },
 
   "dependencies": {
-    "Microsoft.Extensions.Logging.Abstractions": "1.0.0-rc2-final",
-    "Microsoft.Extensions.Options": "1.0.0-rc2-final",
+    "Microsoft.Extensions.Logging.Abstractions": "1.0.0",
+    "Microsoft.Extensions.Options": "1.0.0",
     "Microsoft.ServiceFabric.Services": "2.0.135"
   },
 
