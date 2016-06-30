@@ -68,7 +68,7 @@ Task dotnet-install {
         
         $installScript = Join-Path $ArtifactsPath "dotnet-install.ps1"
         
-        Invoke-WebRequest "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1" `
+        Invoke-WebRequest "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/dotnet-install.ps1" `
             -OutFile $installScript
             
         & $installScript
