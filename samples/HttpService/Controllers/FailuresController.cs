@@ -21,5 +21,14 @@ namespace HttpService.Controllers
             await Task.Delay(TimeSpan.FromSeconds(seconds));
             return $"Response after {seconds} seconds";
         }
+
+        [Route("NotFoundWithHeader")]
+        [HttpGet]
+        public IActionResult NotFoundWithHeader()
+        {
+            Response.Headers["X-ServiceFabric"] = "ResourceNotFound";
+
+            return NotFound();
+        }
     }
 }

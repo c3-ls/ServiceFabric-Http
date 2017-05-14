@@ -68,43 +68,43 @@ namespace C3.ServiceFabric.HttpCommunication
 
             // we got a response from the service - let's try to get the StatusCode to see if we should retry.
 
-            if (_options.RetryHttpStatusCodeErrors)
+            HttpStatusCode? httpStatusCode = null;
+            HttpWebResponse webResponse = null;
+            HttpResponseMessage responseMessage = null;
+
+            var httpEx = ex as HttpResponseException;
+            if (httpEx != null)
             {
-                HttpStatusCode? httpStatusCode = null;
-                HttpWebResponse webResponse = null;
-                HttpResponseMessage responseMessage = null;
+                responseMessage = httpEx.Response;
+                httpStatusCode = httpEx.Response.StatusCode;
+            }
+            else if (webEx != null)
+            {
+                webResponse = webEx.Response as HttpWebResponse;
+                httpStatusCode = webResponse?.StatusCode;
+            }
 
-                var httpEx = ex as HttpResponseException;
-                if (httpEx != null)
+            if (httpStatusCode.HasValue)
+            {
+                if (httpStatusCode == HttpStatusCode.NotFound)
                 {
-                    responseMessage = httpEx.Response;
-                    httpStatusCode = httpEx.Response.StatusCode;
+                    // This could either mean we requested an endpoint that does not exist in the service API (a user error)
+                    // or the address that was resolved by fabric client is stale (transient runtime error) in which case we should re-resolve.
+
+                    _logger.RetryingServiceCall("HTTP 404");
+
+                    result = new ExceptionHandlingRetryResult(
+                        exceptionId: "HTTP 404",
+                        isTransient: false,
+                        retryDelay: TimeSpan.FromMilliseconds(100),
+                        maxRetryCount: 2);
+
+                    return true;
                 }
-                else if (webEx != null)
+
+                if (_options.RetryHttpStatusCodeErrors)
                 {
-                    webResponse = webEx.Response as HttpWebResponse;
-                    httpStatusCode = webResponse?.StatusCode;
-                }
-
-                if (httpStatusCode.HasValue)
-                {
-                    if (httpStatusCode == HttpStatusCode.NotFound)
-                    {
-                        // This could either mean we requested an endpoint that does not exist in the service API (a user error)
-                        // or the address that was resolved by fabric client is stale (transient runtime error) in which we should re-resolve.
-
-                        _logger.RetryingServiceCall("HTTP 404");
-
-                        result = new ExceptionHandlingRetryResult(
-                            exceptionId: "HTTP 404",
-                            isTransient: false,
-                            retryDelay: TimeSpan.FromMilliseconds(100),
-                            maxRetryCount: 2);
-
-                        return true;
-                    }
-
-                    if ((int)httpStatusCode >= 500 && (int)httpStatusCode < 600)
+                    if ((int) httpStatusCode >= 500 && (int) httpStatusCode < 600)
                     {
                         // The address is correct, but the server processing failed.
                         // Retry the operation without re-resolving the address.
