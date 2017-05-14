@@ -20,7 +20,7 @@ namespace C3.ServiceFabric.HttpCommunication
         /// <summary>
         /// Defines whether certain status codes from the response should be retried. (eg. 500)
         /// </summary>
-        public static bool RetryHttpStatusCodeErrors = true;
+        public static bool RetryHttpStatusCodeErrors = false;
 
         /// <summary>
         /// The number of times a service request is retried in case of an error.

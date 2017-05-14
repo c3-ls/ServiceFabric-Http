@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -103,13 +104,34 @@ namespace C3.ServiceFabric.HttpServiceGateway
             HttpResponseMessage response = await client.HttpClient.SendAsync(req, context.RequestAborted);
 
             // cases in which we want to invoke the retry logic from the ClientFactory
+
+            InvokeRetryIfNecessary(response);
+
+            return response;
+        }
+
+        private void InvokeRetryIfNecessary(HttpResponseMessage response)
+        {
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                // Compatibility with the official reverse proxy: Retry all 404 unless there's a special header.
+                // https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reverseproxy
+
+                if (response.Headers.TryGetValues("X-ServiceFabric", out var val)
+                    && string.Equals("ResourceNotFound", val.FirstOrDefault(), StringComparison.OrdinalIgnoreCase))
+                {
+                    response.Headers.Remove("X-ServiceFabric");
+                    return;
+                }
+
+                throw new HttpResponseException("Resource not found", response);
+            }
+
             int statusCode = (int) response.StatusCode;
-            if ((statusCode >= 500 && statusCode < 600) || statusCode == (int) HttpStatusCode.NotFound)
+            if (statusCode >= 500 && statusCode < 600)
             {
                 throw new HttpResponseException("Service call failed", response);
             }
-
-            return response;
         }
 
         private ServicePartitionClient<HttpCommunicationClient> CreateServicePartitionClient(HttpContext context)
