@@ -1,16 +1,16 @@
 Include "build-helpers.ps1"
 
 Properties {
-    
+
     # This number will be appended to all nuget package versions and to the service fabric app versions
     # This should be overwritten by a CI system like VSTS, AppVeyor, TeamCity, ...
     $BuildNumber = "local-" + ((Get-Date).ToUniversalTime().ToString("MMddHHmm"))
 
     # The build configuration used for compilation
     $BuildConfiguration = "Release"
-    
+
     # The folder in which all output packages should be placed
-    $ArtifactsPath = "artifacts"
+    $ArtifactsPath = Join-Path $PWD "artifacts"
 
     # Artifacts-subfolder in which test results will be placed
     $ArtifactsPathTests = "tests"
@@ -26,7 +26,7 @@ Properties {
 
     # A list of "Service Fabric" applications for which a deployment package should be created
     $ServiceFabricApps = @( "GatewaySample" )
-    
+
     # Set this if your Service Fabric apps are placed in a subfolder
     $ServiceFabricBasePath = "samples"
 }
@@ -51,7 +51,7 @@ Task init {
 }
 
 Task clean {
-    
+
     if (Test-Path $ArtifactsPath) { Remove-Item -Path $ArtifactsPath -Recurse -Force -ErrorAction Ignore }
     New-Item $ArtifactsPath -ItemType Directory -ErrorAction Ignore | Out-Null
 
@@ -59,71 +59,92 @@ Task clean {
 }
 
 Task dotnet-install {
-    
+
     if (Get-Command "dotnet.exe" -ErrorAction SilentlyContinue) {
         Write-Host "dotnet SDK already installed"
         exec { dotnet --version }
     } else {
         Write-Host "Installing dotnet SDK"
-        
+
         $installScript = Join-Path $ArtifactsPath "dotnet-install.ps1"
-        
+
         Invoke-WebRequest "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/dotnet-install.ps1" `
             -OutFile $installScript
-            
+
         & $installScript
     }
 }
 
 Task dotnet-restore {
 
-    exec { dotnet restore -v Minimal }
+    # If VersionSuffix isn't supplied here, dotnet pack will use wrong version numbers
+    # for dependant packages: https://github.com/NuGet/Home/issues/4337
+    exec { dotnet restore -v Minimal /p:VersionSuffix=$BuildNumber }
 }
 
 Task dotnet-build {
 
-    exec { dotnet build **\project.json -c $BuildConfiguration --version-suffix $BuildNumber }
+    # --no-incremental to ensure that CI builds always result in a clean build
+    exec { dotnet build -c $BuildConfiguration --version-suffix $BuildNumber --no-incremental }
 }
 
 Task dotnet-test {
 
     $testOutput = Join-Path $ArtifactsPath $ArtifactsPathTests
+    New-Item $testOutput -ItemType Directory -ErrorAction Ignore | Out-Null
 
-    Get-ChildItem -Filter project.json -Recurse | ForEach-Object {
+    $testsFailed = $false
 
-        $projectJson = Get-Content -Path $_.FullName -Raw -ErrorAction Ignore | ConvertFrom-Json -ErrorAction Ignore
+    Get-ChildItem .\test -Filter *.csproj -Recurse | ForEach-Object {
 
-        if ($projectJson -and $projectJson.testRunner -ne $null)
-        {
-            $library = Split-Path $_.DirectoryName -Leaf
-            $testResultOutput = Join-Path $testOutput "$library.xml"
+        $library = Split-Path $_.DirectoryName -Leaf
+        $testResultOutput = Join-Path $testOutput "$library.trx"
 
-            Write-Host ""
-            Write-Host "Testing $library"
-            Write-Host ""
-            
-            exec { dotnet test $_.Directory -c $BuildConfiguration --no-build -xml $testResultOutput }
+        Write-Host ""
+        Write-Host "Testing $library"
+        Write-Host ""
+
+        dotnet test $_.FullName -c $BuildConfiguration --no-build --logger "trx;LogFileName=$testResultOutput"
+        if ($LASTEXITCODE -ne 0) {
+            $testsFailed = $true
         }
+    }
+
+    if ($testsFailed) {
+        throw "at least one test failed"
     }
 }
 
 Task dotnet-pack {
-    
+
     if ($NugetLibraries -eq $null -or $NugetLibraries.Count -eq 0) {
         Write-Host "No NugetLibraries configured"
         return
     }
 
+    $libraryOutput = Join-Path $ArtifactsPath $ArtifactsPathNuGet
+
     $NugetLibraries | ForEach-Object {
-            
+
         $library = $_
-        $libraryOutput = Join-Path $ArtifactsPath $ArtifactsPathNuGet
 
         Write-Host ""
         Write-Host "Packaging $library to $libraryOutput"
         Write-Host ""
 
-        exec { dotnet pack $library -c $BuildConfiguration --version-suffix $BuildNumber --no-build -o $libraryOutput }
+        exec { dotnet pack $library -c $BuildConfiguration --version-suffix $BuildNumber --no-build --include-source --include-symbols -o $libraryOutput }
+    }
+
+    # HACK!! We want to include the PDB files in the regular nupkg so people can debug into them
+    # without having to go through an (internal) symbol server
+    Write-Host ""
+    Write-Host "Replacing regular .nupkg files with .symbols.nupkg content"
+    Get-ChildItem -Path $libraryOutput -Filter *.symbols.nupkg | ForEach-Object {
+
+        $newName = $_.Name -replace ".symbols.nupkg", ".nupkg"
+        $destination = Join-Path $_.Directory.FullName $newName
+
+        Move-Item -Path $_.FullName -Destination $destination -Force
     }
 }
 

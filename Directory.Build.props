@@ -1,0 +1,21 @@
+<Project>
+  <PropertyGroup>
+    <VersionPrefix>1.0.0-rtm</VersionPrefix>
+    <Authors>C3 Loyalty Services</Authors>
+    <Copyright>Copyright (c) C3 Loyalty Services</Copyright>
+    <PackageProjectUrl>https://github.com/c3-ls/ServiceFabric-Http</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/c3-ls/ServiceFabric-Http/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>git://github.com/c3-ls/ServiceFabric-Http</RepositoryUrl>
+
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <!-- Create XML documentation for libraries -->
+  <PropertyGroup Condition="'$(OutputType)'=='library' and '$(Configuration)'=='Release'">
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,21 @@
+<Project>
+  <!-- Embed source files into PDB to enable local debugging once
+    https://visualstudio.uservoice.com/forums/121579-visual-studio-ide/suggestions/19107733-debugger-should-support-c-compiler-embed-optio
+    is supported! -->
+  <PropertyGroup>
+    <BuildDependsOn Condition="'$(Configuration)'=='Release'">EmbedAllSourceFiles;$(BuildDependsOn)</BuildDependsOn>
+  </PropertyGroup>
+  <Target Name="EmbedAllSourceFiles">
+
+    <Message Importance="High" Text="  SKIPPED source file embedding for $(MSBuildProjectName) - DebugType: $(DebugType)"
+      Condition="'$(DebugType)'!='embedded' and '$(DebugType)'!='portable'" />
+
+    <Message Importance="High" Text="$(MSBuildProjectName) -> Embedding source files"
+      Condition="'$(DebugType)'=='embedded' or '$(DebugType)'=='portable'" />
+
+    <ItemGroup Condition="'$(DebugType)'=='embedded' or '$(DebugType)'=='portable'">
+      <EmbeddedFiles Include="@(Compile)" />
+    </ItemGroup>
+  </Target>
+
+</Project>

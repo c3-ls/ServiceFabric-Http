@@ -75,6 +75,7 @@ namespace C3.ServiceFabric.HttpServiceGateway
         /// Adds the <see cref="HttpServiceGatewayMiddleware"/> middleware to the request pipeline.
         /// This middleware is terminal.
         /// </summary>
+        /// <param name="app">The application builder instance.</param>
         /// <param name="options">Options for the <see cref="HttpServiceGatewayMiddleware" />.</param>
         public static IApplicationBuilder RunHttpServiceGateway(this IApplicationBuilder app, HttpServiceGatewayOptions options)
         {

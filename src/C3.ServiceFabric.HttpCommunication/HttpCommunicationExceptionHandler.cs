@@ -10,7 +10,7 @@ using Microsoft.ServiceFabric.Services.Communication.Client;
 namespace C3.ServiceFabric.HttpCommunication
 {
     /// <summary>
-    /// Provides default exception- & retry-handling for the HTTP communication.
+    /// Provides default exception- &amp; retry-handling for the HTTP communication.
     /// </summary>
     public class HttpCommunicationExceptionHandler : IExceptionHandler
     {
