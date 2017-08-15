@@ -77,6 +77,10 @@ Task dotnet-install {
 
 Task dotnet-build {
 
+    # This is here as a workaround until there's no more classic nuget dependencies.
+    # (e.g. Service Fabric applications)
+    exec { nuget restore }
+
     $versionSuffixArg = if ([String]::IsNullOrWhiteSpace($BuildNumber)) { "" } else { "--version-suffix $BuildNumber" }
 
     # --no-incremental to ensure that CI builds always result in a clean build
