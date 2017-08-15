@@ -4,6 +4,15 @@ version: '{build}'
 init:
   - git config --global core.autocrlf true
 
+install:
+  # Download install script to install .NET cli in .dotnet dir
+  - ps: mkdir -Force ".\scripts\obtain\" | Out-Null
+  - ps: Invoke-WebRequest "https://raw.githubusercontent.com/dotnet/cli/release/2.0.0/scripts/obtain/install.ps1" -OutFile ".\scripts\obtain\install.ps1"
+  - ps: $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetcli"
+  - ps: '& .\scripts\obtain\install.ps1 -InstallDir "$env:DOTNET_INSTALL_DIR" -NoPath'
+  # add dotnet to PATH
+  - ps: $env:Path = "$env:DOTNET_INSTALL_DIR;$env:Path"
+
 build_script:
   - ps: if ($env:APPVEYOR_REPO_TAG -eq $true) { $BuildNumber = "" } else { $BuildNumber = "build$env:APPVEYOR_BUILD_NUMBER" }
   - ps: Import-Module .\tools\psake\psake.psm1
