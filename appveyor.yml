@@ -5,7 +5,7 @@ init:
   - git config --global core.autocrlf true
 
 build_script:
-  - ps: if ($env:APPVEYOR_REPO_TAG -eq $true) { $BuildNumber = "" } else { $BuildNumber = $env:APPVEYOR_BUILD_NUMBER }
+  - ps: if ($env:APPVEYOR_REPO_TAG -eq $true) { $BuildNumber = "" } else { $BuildNumber = "build$env:APPVEYOR_BUILD_NUMBER" }
   - ps: Import-Module .\tools\psake\psake.psm1
   - ps: Invoke-psake .\build-definition.ps1 -properties @{ BuildNumber=$BuildNumber }
   - ps: if ($psake.build_success -eq $false) { exit 1 }
@@ -20,7 +20,7 @@ deploy:
   # publish all changes on master to MyGet
   - provider: Environment
     name: MyGet C3-OSS
-  
+
   # new release tag -> create GitHub release
   - provider: GitHub
     release: $(appveyor_repo_tag_name)

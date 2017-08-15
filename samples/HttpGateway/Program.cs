@@ -14,57 +14,12 @@ using System.Collections.Generic;
 
 namespace HttpGateway
 {
-    public class Startup
+    public class Program
     {
-        public IConfigurationRoot Configuration { get; set; }
-
-        public Startup(ILoggerFactory loggerFactory, IHostingEnvironment env)
-        {
-            loggerFactory.AddConsole(new ConsoleLoggerSettings
-            {
-                Switches =
-                {
-                    ["Default"] = LogLevel.Debug,
-                    ["Microsoft"] = LogLevel.Information
-                }
-            });
-
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json");
-
-            Configuration = builder.Build();
-        }
-
-        public void ConfigureServices(IServiceCollection services)
-        {
-            // this adds the required services
-            services.Configure<HttpCommunicationOptions>(Configuration.GetSection("HttpCommunication"));
-            services.AddServiceFabricHttpCommunication();
-        }
-
-        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
-        {
-            // must be changed in a production app
-            app.UseDeveloperExceptionPage();
-
-            ConfigureHttpServiceGateways(app);
-
-            // catch-all
-            app.Run(async context =>
-            {
-                var logger = loggerFactory.CreateLogger("Catch-All");
-                logger.LogWarning("No endpoint found for request {path}", context.Request.Path + context.Request.QueryString);
-
-                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                await context.Response.WriteAsync("Not Found");
-            });
-        }
-
         /// <summary>
         /// Configures a gateway endpoint for every service that should be exposed.
         /// </summary>
-        private void ConfigureHttpServiceGateways(IApplicationBuilder app)
+        private static void ConfigureHttpServiceGateways(IApplicationBuilder app, WebHostBuilderContext hostingContext)
         {
             // ---------------------
             // Samples for configuring a single gateway instance
@@ -103,7 +58,7 @@ namespace HttpGateway
             // Samples for configuring many gateway instances
 
             // this configures one or many gateway instances based on the Configuration system (e.g. file-based).
-            app.RunHttpServiceGateways(Configuration.GetSection("GatewayServices"));
+            app.RunHttpServiceGateways(hostingContext.Configuration.GetSection("GatewayServices"));
 
             // this configures one or many gateway instances based on a list of configuration entries.
             var services = new List<HttpServiceGatewayConfigurationEntry>
@@ -121,7 +76,42 @@ namespace HttpGateway
                 builder
                      .UseKestrel()
                      .UseContentRoot(Directory.GetCurrentDirectory())
-                     .UseStartup<Startup>()
+                     .ConfigureAppConfiguration((context, configBuilder) =>
+                     {
+                         configBuilder.AddJsonFile("appsettings.json");
+                     })
+                     .ConfigureLogging((hostingContext, logging) =>
+                     {
+                         logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                         logging.AddConsole();
+                     })
+                     .ConfigureServices((hostingContext, services) =>
+                     {
+                         // this adds the required services
+                         services.Configure<HttpCommunicationOptions>(hostingContext.Configuration.GetSection("HttpCommunication"));
+                         services.AddServiceFabricHttpCommunication();
+                     })
+                     .Configure(app =>
+                     {
+                         var hostingContext = app.ApplicationServices.GetRequiredService<WebHostBuilderContext>();
+
+                         // must be changed in a production app
+                         app.UseDeveloperExceptionPage();
+
+                         ConfigureHttpServiceGateways(app, hostingContext);
+
+                         // catch-all
+                         app.Run(async context =>
+                         {
+                             var loggerFactory = context.RequestServices.GetRequiredService<ILoggerFactory>();
+                             var logger = loggerFactory.CreateLogger("Catch-All");
+
+                             logger.LogWarning("No endpoint found for request {path}", context.Request.Path + context.Request.QueryString);
+
+                             context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                             await context.Response.WriteAsync("Not Found");
+                         });
+                     })
                      .Build()
                      .Run();
             }

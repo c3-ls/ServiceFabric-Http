@@ -33,7 +33,7 @@ Properties {
 
 FormatTaskName ("`n" + ("-"*25) + "[{0}]" + ("-"*25) + "`n")
 
-Task Default -depends init, clean, dotnet-install, dotnet-restore, dotnet-build, dotnet-test, dotnet-pack, packageServiceFabric
+Task Default -depends init, clean, dotnet-install, dotnet-build, dotnet-test, dotnet-pack, packageServiceFabric
 
 Task init {
 
@@ -68,24 +68,19 @@ Task dotnet-install {
 
         $installScript = Join-Path $ArtifactsPath "dotnet-install.ps1"
 
-        Invoke-WebRequest "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/dotnet-install.ps1" `
+        Invoke-WebRequest "https://raw.githubusercontent.com/dotnet/cli/release/2.0.0/scripts/obtain/dotnet-install.ps1" `
             -OutFile $installScript
 
         & $installScript
     }
 }
 
-Task dotnet-restore {
-
-    # If VersionSuffix isn't supplied here, dotnet pack will use wrong version numbers
-    # for dependant packages: https://github.com/NuGet/Home/issues/4337
-    exec { dotnet restore -v Minimal /p:VersionSuffix=$BuildNumber }
-}
-
 Task dotnet-build {
 
+    $versionSuffixArg = if ([String]::IsNullOrWhiteSpace($BuildNumber)) { "" } else { "--version-suffix $BuildNumber" }
+
     # --no-incremental to ensure that CI builds always result in a clean build
-    exec { dotnet build -c $BuildConfiguration --version-suffix $BuildNumber --no-incremental }
+    exec { Invoke-Expression "dotnet build -c $BuildConfiguration $versionSuffixArg --no-incremental" }
 }
 
 Task dotnet-test {
@@ -104,7 +99,7 @@ Task dotnet-test {
         Write-Host "Testing $library"
         Write-Host ""
 
-        dotnet test $_.FullName -c $BuildConfiguration --no-build --logger "trx;LogFileName=$testResultOutput"
+        dotnet test $_.FullName -c $BuildConfiguration --no-restore --no-build --logger "trx;LogFileName=$testResultOutput"
         if ($LASTEXITCODE -ne 0) {
             $testsFailed = $true
         }
@@ -123,6 +118,7 @@ Task dotnet-pack {
     }
 
     $libraryOutput = Join-Path $ArtifactsPath $ArtifactsPathNuGet
+    $versionSuffixArg = if ([String]::IsNullOrWhiteSpace($BuildNumber)) { "" } else { "--version-suffix $BuildNumber" }
 
     $NugetLibraries | ForEach-Object {
 
@@ -132,7 +128,7 @@ Task dotnet-pack {
         Write-Host "Packaging $library to $libraryOutput"
         Write-Host ""
 
-        exec { dotnet pack $library -c $BuildConfiguration --version-suffix $BuildNumber --no-build --include-source --include-symbols -o $libraryOutput }
+        exec { Invoke-Expression "dotnet pack $library -c $BuildConfiguration $versionSuffixArg --no-restore --no-build --include-source --include-symbols -o $libraryOutput" }
     }
 
     # HACK!! We want to include the PDB files in the regular nupkg so people can debug into them

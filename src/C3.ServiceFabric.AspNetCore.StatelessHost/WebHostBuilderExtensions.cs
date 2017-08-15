@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.PlatformAbstractions;
 using System;
 using System.Fabric;
 
@@ -14,8 +13,7 @@ namespace C3.ServiceFabric.AspNetCore.StatelessHost
             if (webHostBuilder == null)
                 throw new ArgumentNullException(nameof(webHostBuilder));
 
-            var application = PlatformServices.Default.Application;
-            string serviceTypeName = AspNetCoreService.GetServiceTypeName(application);
+            string serviceTypeName = AspNetCoreService.GetServiceTypeName();
 
             Console.WriteLine("UseServiceFabric - ServiceTypeName: " + serviceTypeName);
             Console.WriteLine("UseServiceFabric - ServerUrls: " + webHostBuilder.GetSetting(WebHostDefaults.ServerUrlsKey));

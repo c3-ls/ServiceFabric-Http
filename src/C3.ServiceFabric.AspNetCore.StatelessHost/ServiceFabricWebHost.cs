@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.Extensions.PlatformAbstractions;
 using System;
 using System.Fabric;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace C3.ServiceFabric.AspNetCore.StatelessHost
 {
@@ -31,13 +32,25 @@ namespace C3.ServiceFabric.AspNetCore.StatelessHost
 
         public void Start()
         {
-            Console.WriteLine("ServiceFabricWebHost: Start");
+            StartAsync().GetAwaiter().GetResult();
+        }
 
-            var appEnv = PlatformServices.Default.Application;
+        public Task StartAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            Console.WriteLine("ServiceFabricWebHost: StartAsync");
 
-            string serviceTypeName = AspNetCoreService.GetServiceTypeName(appEnv);
+            string serviceTypeName = AspNetCoreService.GetServiceTypeName();
 
             _fabricRuntime.RegisterStatelessServiceFactory(serviceTypeName, new AspNetCoreServiceFactory(_webHost));
+
+            return Task.CompletedTask;
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            Console.WriteLine("ServiceFabricWebHost: StopAsync");
+
+            return _webHost.StopAsync(cancellationToken);
         }
 
         public void Dispose()
@@ -46,5 +59,6 @@ namespace C3.ServiceFabric.AspNetCore.StatelessHost
 
             _webHost.Dispose();
         }
+
     }
 }

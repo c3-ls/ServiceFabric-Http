@@ -80,7 +80,8 @@ function PublishSfApp($sfBasePath, $sfApp, $outputPath, $buildConfiguration, $bu
             New-Item $codeOutput -ItemType Directory | Out-Null
         }
 
-        exec { dotnet publish $servicePath -c $buildConfiguration --version-suffix $buildNumber -o $codeOutput }
+        $versionSuffixArg = if ([String]::IsNullOrWhiteSpace($buildNumber)) { "" } else { "--version-suffix $buildNumber" }
+        exec { Invoke-Expression "dotnet publish $servicePath -c $buildConfiguration --no-restore $versionSuffixArg -o $codeOutput" }
 
         Copy-Item (Join-Path $servicePath "PackageRoot/*") $serviceOutput -Recurse -Force
     }

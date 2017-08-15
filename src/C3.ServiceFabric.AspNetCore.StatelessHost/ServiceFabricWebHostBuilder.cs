@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Fabric;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace C3.ServiceFabric.AspNetCore.StatelessHost
 {
@@ -58,15 +56,27 @@ namespace C3.ServiceFabric.AspNetCore.StatelessHost
             return new ServiceFabricWebHost(_builder.Build(), _fabricRuntime);
         }
 
+        public void Dispose()
+        {
+            _fabricRuntime?.Dispose();
+        }
+
+        public IWebHostBuilder ConfigureAppConfiguration(Action<WebHostBuilderContext, IConfigurationBuilder> configureDelegate)
+        {
+            _builder.ConfigureAppConfiguration(configureDelegate);
+            return this;
+        }
+
         public IWebHostBuilder ConfigureServices(Action<IServiceCollection> configureServices)
         {
             _builder.ConfigureServices(configureServices);
             return this;
         }
 
-        public void Dispose()
+        public IWebHostBuilder ConfigureServices(Action<WebHostBuilderContext, IServiceCollection> configureServices)
         {
-            _fabricRuntime?.Dispose();
+            _builder.ConfigureServices(configureServices);
+            return this;
         }
 
         public string GetSetting(string key)
@@ -77,32 +87,6 @@ namespace C3.ServiceFabric.AspNetCore.StatelessHost
         public IWebHostBuilder UseSetting(string key, string value)
         {
             _builder.UseSetting(key, value);
-            return this;
-        }
-
-        public IWebHostBuilder UseLoggerFactory(ILoggerFactory loggerFactory)
-        {
-            _builder.UseLoggerFactory(loggerFactory);
-            return this;
-        }
-
-        public IWebHostBuilder ConfigureLogging(Action<ILoggerFactory> configureLogging)
-        {
-            _builder.ConfigureLogging(configureLogging);
-            return this;
-        }
-
-        public IWebHostBuilder UseStartup(Type startupType)
-        {
-            // TODO @cweiss Remove in RC2 ( https://github.com/aspnet/Hosting/commit/8f5f8d28d00468725d9fd8dd95123f43d22f2c3c )
-            _builder.UseStartup(startupType);
-            return this;
-        }
-
-        public IWebHostBuilder Configure(Action<IApplicationBuilder> configureApplication)
-        {
-            // TODO @cweiss Remove in RC2 ( https://github.com/aspnet/Hosting/commit/8f5f8d28d00468725d9fd8dd95123f43d22f2c3c )
-            _builder.Configure(configureApplication);
             return this;
         }
     }

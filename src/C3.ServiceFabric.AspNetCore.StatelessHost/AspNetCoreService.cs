@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
-using Microsoft.Extensions.PlatformAbstractions;
 using System;
 using System.Fabric;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -60,9 +60,11 @@ namespace C3.ServiceFabric.AspNetCore.StatelessHost
             Stop();
         }
 
-        public static string GetServiceTypeName(ApplicationEnvironment appEnv)
+        public static string GetServiceTypeName()
         {
-            return string.Format("{0}Type", appEnv.ApplicationName);
+            string applicationName = Assembly.GetEntryAssembly().GetName().Name;
+
+            return string.Format("{0}Type", applicationName);
         }
     }
 }
