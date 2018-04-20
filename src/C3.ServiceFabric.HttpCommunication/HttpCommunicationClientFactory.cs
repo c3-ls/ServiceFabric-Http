@@ -73,11 +73,6 @@ namespace C3.ServiceFabric.HttpCommunication
             if (string.IsNullOrEmpty(endpoint))
                 throw new ArgumentNullException(nameof(endpoint));
 
-            if (string.IsNullOrEmpty(endpoint) || !endpoint.StartsWith("http", StringComparison.OrdinalIgnoreCase))
-            {
-                throw new InvalidOperationException($"The endpoint address '{endpoint}' is not a valid http endpoint!");
-            }
-
             // BaseAddress must end with a trailing slash - this is critical for the usage of HttpClient!
             // http://stackoverflow.com/questions/23438416/why-is-httpclient-baseaddress-not-working
             if (!endpoint.EndsWith("/"))
