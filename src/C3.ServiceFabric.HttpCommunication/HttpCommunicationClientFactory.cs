@@ -84,16 +84,13 @@ namespace C3.ServiceFabric.HttpCommunication
             // However, it's not possible to call the + url directly so we have to change it to localhost.
             endpoint = endpoint.Replace("+", "localhost");
 
-            Uri uri = new Uri(endpoint, UriKind.Absolute);
-
             // We default to HTTP if it's not available in the endpoint.
-            var uriBuilder = new UriBuilder(endpoint);
-            if (string.IsNullOrEmpty(uriBuilder.Scheme))
+            if (!endpoint.Contains("://"))
             {
-                uriBuilder.Scheme = "http";
+                endpoint = "http://" + endpoint;
             }
 
-            return uriBuilder.Uri;
+            return new Uri(endpoint, UriKind.Absolute);
         }
     }
 }
