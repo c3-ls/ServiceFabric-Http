@@ -84,7 +84,7 @@ Task dotnet-build {
     $versionSuffixArg = if ([String]::IsNullOrWhiteSpace($BuildNumber)) { "" } else { "--version-suffix $BuildNumber" }
 
     # --no-incremental to ensure that CI builds always result in a clean build
-    exec { Invoke-Expression "dotnet build -c $BuildConfiguration $versionSuffixArg --no-incremental" }
+    exec { Invoke-Expression "dotnet build -c $BuildConfiguration $versionSuffixArg --no-incremental --no-restore" }
 }
 
 Task dotnet-test {

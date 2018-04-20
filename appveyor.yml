@@ -6,10 +6,6 @@ image: Visual Studio 2017 Preview
 init:
   - git config --global core.autocrlf true
 
-install:
-  - cmd: curl -O https://dotnetcli.blob.core.windows.net/dotnet/Sdk/release/2.0.0/dotnet-sdk-latest-win-x64.exe
-  - cmd: dotnet-sdk-latest-win-x64.exe /install /quiet /norestart /log install.log
-
 build_script:
   - ps: if ($env:APPVEYOR_REPO_TAG -eq $true) { $BuildNumber = "" } else { $BuildNumber = "build$env:APPVEYOR_BUILD_NUMBER" }
   - ps: Import-Module .\tools\psake\psake.psm1

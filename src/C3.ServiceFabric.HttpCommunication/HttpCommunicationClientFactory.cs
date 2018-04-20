@@ -70,6 +70,9 @@ namespace C3.ServiceFabric.HttpCommunication
 
         private Uri CreateEndpointUri(string endpoint)
         {
+            if (string.IsNullOrEmpty(endpoint))
+                throw new ArgumentNullException(nameof(endpoint));
+
             if (string.IsNullOrEmpty(endpoint) || !endpoint.StartsWith("http", StringComparison.OrdinalIgnoreCase))
             {
                 throw new InvalidOperationException($"The endpoint address '{endpoint}' is not a valid http endpoint!");
@@ -82,11 +85,20 @@ namespace C3.ServiceFabric.HttpCommunication
                 endpoint = endpoint + "/";
             }
 
-            // ServiceFabric publishes ASP.NET 5 projects with the endpoint "http://+:port" to listen on all IPs.
+            // ServiceFabric publishes ASP.NET Core projects with the endpoint "http://+:port" to listen on all IPs.
             // However, it's not possible to call the + url directly so we have to change it to localhost.
             endpoint = endpoint.Replace("+", "localhost");
 
-            return new Uri(endpoint, UriKind.Absolute);
+            Uri uri = new Uri(endpoint, UriKind.Absolute);
+
+            // We default to HTTP if it's not available in the endpoint.
+            var uriBuilder = new UriBuilder(endpoint);
+            if (string.IsNullOrEmpty(uriBuilder.Scheme))
+            {
+                uriBuilder.Scheme = "http";
+            }
+
+            return uriBuilder.Uri;
         }
     }
 }
