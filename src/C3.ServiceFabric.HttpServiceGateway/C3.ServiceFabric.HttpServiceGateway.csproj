@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <Platforms>AnyCPU;x64</Platforms>
+    <Description>A HTTP-based gateway for Service Fabric, implemented as an ASP.NET Core middleware.</Description>
+    <PackageTags>ServiceFabric;ReliableServices;HttpClient;Retry;AspNetCore;gateway</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />

@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
-    <PackageTags>ServiceFabric;ReliableServices;HttpClient;Retry;AspNetCore</PackageTags>
     <Platforms>AnyCPU;x64</Platforms>
+    <Description>An implementation of `ICommunicationClient` (part of the Service Fabric SDK) for HTTP. It resolves services and contains the retry logic.</Description>
+    <PackageTags>ServiceFabric;ReliableServices;HttpClient;Retry;AspNetCore</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />

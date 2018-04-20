@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
-    <PackageTags>ServiceFabric;ReliableServices;Hosting;AspNetCore</PackageTags>
     <Platforms>AnyCPU;x64</Platforms>
+    <PackageTags>ServiceFabric;ReliableServices;Hosting;AspNetCore</PackageTags>
+    <Description>A hosting library for stateless ASP.NET Core-based Service Fabric services.</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
