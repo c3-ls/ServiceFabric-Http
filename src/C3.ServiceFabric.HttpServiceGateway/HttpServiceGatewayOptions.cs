@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.ServiceFabric.Services.Client;
+using Microsoft.ServiceFabric.Services.Communication.Client;
 
 namespace C3.ServiceFabric.HttpServiceGateway
 {
@@ -23,5 +24,15 @@ namespace C3.ServiceFabric.HttpServiceGateway
         /// Delegate for resolving the partition key for partitioned services.
         /// </summary>
         public Func<HttpContext, ServicePartitionKey> ServicePartitionKeyResolver { get; set; }
+
+        /// <summary>
+        /// Defines which replica should be selected. Defaults to <see cref="Microsoft.ServiceFabric.Services.Communication.Client.TargetReplicaSelector.RandomInstance"/>.
+        /// </summary>
+        public TargetReplicaSelector TargetReplicaSelector { get; set; } = TargetReplicaSelector.RandomInstance;
+
+        /// <summary>
+        /// Defines the retry behavior of the <see cref="ServicePartitionClient{TCommunicationClient}"/>.
+        /// </summary>
+        public OperationRetrySettings RetrySettings { get; set; } = new OperationRetrySettings();
     }
 }

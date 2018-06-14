@@ -15,8 +15,8 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "web": {
-      "commandName": "HttpService",
+    "HttpService": {
+      "commandName": "project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Platforms>AnyCPU;x64</Platforms>
     <PackageTags>ServiceFabric;ReliableServices;Hosting;AspNetCore</PackageTags>
     <Description>A hosting library for stateless ASP.NET Core-based Service Fabric services.</Description>
   </PropertyGroup>

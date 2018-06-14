@@ -29,7 +29,7 @@ namespace HttpDirect
                 new Uri("fabric:/GatewaySample/HttpService"));
 
             // call your service.
-            await client.InvokeWithRetry(async x =>
+            await client.InvokeWithRetryAsync(async x =>
             {
                 HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Get, "api/values");
 
@@ -38,7 +38,7 @@ namespace HttpDirect
                 await context.Response.WriteAsync(DateTime.Now + " - Result from API: ");
                 await context.Response.WriteAsync("Status: " + response.StatusCode + "; Body: ");
                 await response.Content.CopyToAsync(context.Response.Body);
-            });
+            }, context.RequestAborted);
         }
     }
 }

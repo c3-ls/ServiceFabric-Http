@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Platforms>AnyCPU;x64</Platforms>
     <Description>An implementation of `ICommunicationClient` (part of the Service Fabric SDK) for HTTP. It resolves services and contains the retry logic.</Description>
     <PackageTags>ServiceFabric;ReliableServices;HttpClient;Retry;AspNetCore</PackageTags>
   </PropertyGroup>

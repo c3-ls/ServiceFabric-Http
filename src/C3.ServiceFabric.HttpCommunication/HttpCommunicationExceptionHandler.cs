@@ -39,11 +39,19 @@ namespace C3.ServiceFabric.HttpCommunication
 
             // errors where we didn't get a response from the service.
 
-            if (ex is TaskCanceledException || ex is TimeoutException || ex is ProtocolViolationException || ex is SocketException)
+            if (ex is OperationCanceledException || ex is TimeoutException || ex is ProtocolViolationException)
             {
                 _logger.RetryingServiceCall(ex.GetType().Name);
 
                 return CreateExceptionHandlingRetryResult(false, ex, out result);
+            }
+
+            var socketException = ex as SocketException ?? ex.InnerException as SocketException;
+            if (socketException != null)
+            {
+                _logger.RetryingServiceCall("SocketError " + socketException.SocketErrorCode, null, ex);
+
+                return CreateExceptionHandlingRetryResult(false, socketException, out result);
             }
 
             var webEx = ex as WebException ?? ex.InnerException as WebException;

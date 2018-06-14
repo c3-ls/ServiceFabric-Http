@@ -15,8 +15,8 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "web": {
-      "commandName": "HttpDirect",
+    "HttpDirect": {
+      "commandName": "project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

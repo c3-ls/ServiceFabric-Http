@@ -68,9 +68,17 @@ namespace C3.ServiceFabric.HttpServiceGateway
                 }
 
                 HttpResponseMessage response = await servicePartitionClient.InvokeWithRetryAsync(
-                    client => ExecuteServiceCallAsync(client, context, contextRequestBody));
+                    client => ExecuteServiceCallAsync(client, context, contextRequestBody),
+                    context.RequestAborted);
 
-                await response.CopyToCurrentContext(context);
+                if (response != null)
+                {
+                    await response.CopyToCurrentContext(context);
+                }
+                else
+                {
+                    _logger.LogWarning("No response. RequestAborted: {RequestAborted}", context.RequestAborted);
+                }
             }
             catch (HttpResponseException ex)
             {
@@ -83,6 +91,10 @@ namespace C3.ServiceFabric.HttpServiceGateway
 
         private async Task<HttpResponseMessage> ExecuteServiceCallAsync(HttpCommunicationClient client, HttpContext context, byte[] contextRequestBody)
         {
+            // We don't throw because this would result in a retry loop.
+            if (context.RequestAborted.IsCancellationRequested)
+                return null;
+
             // create request and copy all details
 
             HttpRequestMessage req = new HttpRequestMessage
@@ -101,7 +113,16 @@ namespace C3.ServiceFabric.HttpServiceGateway
 
             // execute request
 
-            HttpResponseMessage response = await client.HttpClient.SendAsync(req, context.RequestAborted);
+            HttpResponseMessage response;
+            try
+            {
+                response = await client.HttpClient.SendAsync(req, context.RequestAborted);
+            }
+            catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
+            {
+                // We don't have to retry if the client is no longer connected.
+                return null;
+            }
 
             // cases in which we want to invoke the retry logic from the ClientFactory
 
@@ -142,7 +163,9 @@ namespace C3.ServiceFabric.HttpServiceGateway
                 communicationClientFactory: _httpCommunicationClientFactory,
                 serviceUri: _gatewayOptions.ServiceName,
                 partitionKey: _gatewayOptions.ServicePartitionKeyResolver?.Invoke(context),
-                listenerName: _gatewayOptions.ListenerName);
+                listenerName: _gatewayOptions.ListenerName,
+                targetReplicaSelector: _gatewayOptions.TargetReplicaSelector,
+                retrySettings: _gatewayOptions.RetrySettings);
 
             return servicePartitionClient;
         }
