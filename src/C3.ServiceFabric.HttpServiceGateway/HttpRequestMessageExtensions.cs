@@ -22,7 +22,7 @@ namespace C3.ServiceFabric.HttpServiceGateway
         /// <summary>
         /// Request headers which are either set by the framework or shouldn't be copied.
         /// </summary>
-        private static List<string> _ignoredRequestHeaders = new List<string>
+        private static readonly List<string> _ignoredRequestHeaders = new List<string>
         {
             "Connection",
             "Content-Length",

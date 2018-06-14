@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -38,16 +39,9 @@ namespace C3.ServiceFabric.HttpCommunication
 
             // errors where we didn't get a response from the service.
 
-            if (ex is TaskCanceledException || ex is TimeoutException)
+            if (ex is TaskCanceledException || ex is TimeoutException || ex is ProtocolViolationException || ex is SocketException)
             {
                 _logger.RetryingServiceCall(ex.GetType().Name);
-
-                return CreateExceptionHandlingRetryResult(false, ex, out result);
-            }
-
-            if (ex is ProtocolViolationException)
-            {
-                _logger.RetryingServiceCall("ProtocolViolationException", null, ex);
 
                 return CreateExceptionHandlingRetryResult(false, ex, out result);
             }
@@ -72,8 +66,7 @@ namespace C3.ServiceFabric.HttpCommunication
             HttpWebResponse webResponse = null;
             HttpResponseMessage responseMessage = null;
 
-            var httpEx = ex as HttpResponseException;
-            if (httpEx != null)
+            if (ex is HttpResponseException httpEx)
             {
                 responseMessage = httpEx.Response;
                 httpStatusCode = httpEx.Response.StatusCode;

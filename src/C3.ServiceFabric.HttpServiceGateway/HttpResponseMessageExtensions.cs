@@ -12,7 +12,7 @@ namespace C3.ServiceFabric.HttpServiceGateway
         /// <summary>
         /// Response headers which are either set by the framework or shouldn't be copied.
         /// </summary>
-        private static List<string> _ignoredResponseHeaders = new List<string>
+        private static readonly List<string> _ignoredResponseHeaders = new List<string>
         {
             "Connection",
             "Date",
