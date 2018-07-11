@@ -2,6 +2,8 @@
 using System;
 using System.Fabric;
 using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace C3.ServiceFabric.HttpCommunication
 {
@@ -11,7 +13,9 @@ namespace C3.ServiceFabric.HttpCommunication
     /// </summary>
     public class HttpCommunicationClient : ICommunicationClient, IDisposable
     {
-        public HttpClient HttpClient { get; }
+        private HttpClient HttpClient { get; }
+
+        private HttpClient HttpClientWithCookieForwarding { get; }
 
         /// <summary>
         /// The resolved service partition which contains the resolved service endpoints.
@@ -30,23 +34,55 @@ namespace C3.ServiceFabric.HttpCommunication
 
         public HttpCommunicationClient(Uri baseAddress, TimeSpan operationTimeout)
         {
-            HttpClientHandler httpClientHandler = new HttpClientHandler
-            {
-                // the calling system must decide whether to follow redirects or not.
-                // (otherwise it can't e.g. change the browser url)
-                AllowAutoRedirect = false
-            };
-
-            HttpClient = new HttpClient(httpClientHandler)
-            {
-                BaseAddress = baseAddress,
-                Timeout = operationTimeout
-            };
+            HttpClient = CreateClient(baseAddress, operationTimeout, false);
+            HttpClientWithCookieForwarding = CreateClient(baseAddress, operationTimeout, true);
         }
+
+        /// <summary>
+        /// Send an HTTP request using the appropriate <see cref="HttpClient"/>, depending on <see cref="shouldForwardCookies"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <param name="shouldForwardCookies"></param>
+        /// <returns></returns>
+        public Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken,
+            bool shouldForwardCookies)
+        {
+            var client = shouldForwardCookies ? HttpClientWithCookieForwarding : HttpClient;
+            return client.SendAsync(request, cancellationToken);
+        }
+
+        /// <summary>
+        /// Validates this <see cref="HttpCommunicationClient"/> against the given <see cref="baseAddress"/>
+        /// </summary>
+        /// <param name="baseAddress"></param>
+        /// <returns></returns>
+        public bool Validate(Uri baseAddress) =>
+            HttpClient.BaseAddress == baseAddress &&
+            HttpClientWithCookieForwarding.BaseAddress == baseAddress;
 
         public void Dispose()
         {
             HttpClient?.Dispose();
+        }
+
+        private HttpClient CreateClient(Uri baseAddress, TimeSpan operationTimeout, bool forwardsCookies)
+        {
+            HttpClientHandler httpClientHandler = new HttpClientHandler
+            {
+                // the calling system must decide whether to follow redirects or not.
+                // (otherwise it can't e.g. change the browser url)
+                AllowAutoRedirect = false,
+                UseCookies = !forwardsCookies
+            };
+
+            return new HttpClient(httpClientHandler)
+            {
+                BaseAddress = baseAddress,
+                Timeout = operationTimeout
+            };
         }
     }
 }

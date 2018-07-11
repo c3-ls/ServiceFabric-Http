@@ -110,13 +110,13 @@ namespace C3.ServiceFabric.HttpServiceGateway
 
             req.CopyHeadersFromCurrentContext(context);
             req.AddProxyHeaders(context);
-
+            
             // execute request
 
             HttpResponseMessage response;
             try
             {
-                response = await client.HttpClient.SendAsync(req, context.RequestAborted);
+                response = await client.SendAsync(req, context.RequestAborted, _gatewayOptions.ShouldForwardCookies);
             }
             catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
             {

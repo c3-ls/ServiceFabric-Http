@@ -33,7 +33,7 @@ namespace HttpDirect
             {
                 HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Get, "api/values");
 
-                HttpResponseMessage response = await x.HttpClient.SendAsync(req, context.RequestAborted);
+                HttpResponseMessage response = await x.SendAsync(req, context.RequestAborted, false);
 
                 await context.Response.WriteAsync(DateTime.Now + " - Result from API: ");
                 await context.Response.WriteAsync("Status: " + response.StatusCode + "; Body: ");

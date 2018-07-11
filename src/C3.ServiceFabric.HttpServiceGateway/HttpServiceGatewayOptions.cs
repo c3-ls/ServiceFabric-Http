@@ -34,5 +34,10 @@ namespace C3.ServiceFabric.HttpServiceGateway
         /// Defines the retry behavior of the <see cref="ServicePartitionClient{TCommunicationClient}"/>.
         /// </summary>
         public OperationRetrySettings RetrySettings { get; set; } = new OperationRetrySettings();
+
+        /// <summary>
+        /// Defines whether cookies should be forwarded on to the service with the request
+        /// </summary>
+        public bool ShouldForwardCookies { get; set; } = false; // Default to false for backwards compat, but should probably default to true?
     }
 }
