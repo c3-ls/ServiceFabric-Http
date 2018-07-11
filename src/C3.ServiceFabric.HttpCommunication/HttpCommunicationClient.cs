@@ -13,9 +13,9 @@ namespace C3.ServiceFabric.HttpCommunication
     /// </summary>
     public class HttpCommunicationClient : ICommunicationClient, IDisposable
     {
-        public HttpClient HttpClient { get; }
+        private HttpClient HttpClient { get; }
 
-        public HttpClient HttpClientWithCookieForwarding { get; }
+        private HttpClient HttpClientWithCookieForwarding { get; }
 
         /// <summary>
         /// The resolved service partition which contains the resolved service endpoints.
@@ -53,6 +53,15 @@ namespace C3.ServiceFabric.HttpCommunication
             var client = shouldForwardCookies ? HttpClientWithCookieForwarding : HttpClient;
             return client.SendAsync(request, cancellationToken);
         }
+
+        /// <summary>
+        /// Validates this <see cref="HttpCommunicationClient"/> against the given <see cref="baseAddress"/>
+        /// </summary>
+        /// <param name="baseAddress"></param>
+        /// <returns></returns>
+        public bool Validate(Uri baseAddress) =>
+            HttpClient.BaseAddress == baseAddress &&
+            HttpClientWithCookieForwarding.BaseAddress == baseAddress;
 
         public void Dispose()
         {

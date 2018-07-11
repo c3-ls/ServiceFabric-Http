@@ -64,7 +64,7 @@ namespace C3.ServiceFabric.HttpCommunication
             _logger.ValidateClient(client, endpoint);
 
             Uri endpointUri = CreateEndpointUri(endpoint);
-            bool equals = client != null && client.HttpClient.BaseAddress == endpointUri;
+            bool equals = client?.Validate(endpointUri) ?? false; 
             return equals;
         }
 
