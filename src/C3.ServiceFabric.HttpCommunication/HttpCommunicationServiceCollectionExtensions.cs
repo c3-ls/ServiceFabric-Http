@@ -17,7 +17,7 @@ namespace C3.ServiceFabric.HttpCommunication
 
             services.AddTransient(x => ServicePartitionResolver.GetDefault());
             services.AddTransient<IExceptionHandler, HttpCommunicationExceptionHandler>();
-            services.AddSingleton<IHttpCommunicationClientFactory, HttpCommunicationClientFactory>();
+            services.AddScoped<IHttpCommunicationClientFactory, HttpCommunicationClientFactory>();
 
             return services;
         }
