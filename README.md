@@ -1,3 +1,5 @@
+**We're no longer maintaining this project. Have a look at [Service Fabric's built-in HTTP reverse proxy](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-reverseproxy) or the [Ocelot API gateway](https://github.com/ThreeMammals/Ocelot) which also [supports Service Fabric](https://ocelot.readthedocs.io/en/latest/features/servicefabric.html).**
+
 # Libraries for HTTP-based Azure Service Fabric services
 
 This project contains three components:
@@ -20,9 +22,3 @@ Please look at [Stateless ASP.NET Core Host](https://github.com/c3-ls/ServiceFab
 You can find more documentation in our [Wiki](https://github.com/c3-ls/ServiceFabric-Http/wiki) 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/glormo3hm3wsdwm4/branch/master?svg=true)](https://ci.appveyor.com/project/cwe1ss/servicefabric-httpservicegateway/branch/master)
-
-## Contributions
-
-Feel free to post issues, questions and feedback as an issue in this repository. 
-If you want to contribute code please make sure you discuss the change with us before
-you send the pull request if it contains major or breaking changes.
